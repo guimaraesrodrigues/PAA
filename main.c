@@ -142,11 +142,7 @@ Point string_to_points(char str[]) {
 
 
 int main(int argc, char *argv[]) {
-    FILE *fp = NULL;
-    int n_lines = 0;
-    int n_pairs;
-    char line_buffer[80];
-    char first_line[10];
+    FILE *file = NULL;
 
     /* Check for cmd arguments */
     if (argc != 2) {
@@ -155,32 +151,30 @@ int main(int argc, char *argv[]) {
     }
 
     /* Open file */
-    fp = fopen(argv[1], "r");
-    if (!fp) {
+    file = fopen(argv[1], "r");
+    if (!file) {
         perror ("File open error!\n");
         return 1;
     }
 
-    fscanf(fp, "%s", first_line);
-    sscanf(first_line, "%d", &n_pairs);
+    char first_line[10];
+    int n_pairs;
+    fscanf(file, "%s", first_line);
+    sscanf(first_line, "%d", &n_pairs);//convert string to int
 
-    // printf("%d", n_pairs);
     Point points[n_pairs];
 
-    // P[0].x = 2;
-    // P[0].y = 3;
-
-    while (!feof (fp)) {
-        if (fgets(line_buffer, sizeof(line_buffer), fp)) {
+    char line_buffer[80]; //buffer to be used for each line
+    int n_lines = 0;
+    while (!feof (file)) {
+        if (fgets(line_buffer, sizeof(line_buffer), file)) {
             points[n_lines] = string_to_points(line_buffer);
             n_lines++;
         }
     }
 
-    printf("%lf %lf", points[2].x, points[2].y);
-
     /* Done */
-    fclose (fp);
+    fclose (file);
 
 	// int n = sizeof(P) / sizeof(P[0]);
 	// printf("The smallest distance is %f ", closest(P, n));
