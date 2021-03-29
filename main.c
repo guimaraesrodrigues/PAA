@@ -38,13 +38,17 @@ float dist(Point p1, Point p2)
 
 // A Brute Force method to return the smallest distance between two points
 // in P[] of size n
-float bruteForce(Point P[], int n)
+float bruteForce(Point P[], int n, Point minPoints[])
 {
 	float min = FLT_MAX;
+
 	for (int i = 0; i < n; ++i)
 		for (int j = i+1; j < n; ++j)
-			if (dist(P[i], P[j]) < min)
+			if (dist(P[i], P[j]) < min){
 				min = dist(P[i], P[j]);
+				minPoints[0] = P[i];
+				minPoints[1] = P[j];
+			}
 	return min;
 }
 
@@ -60,7 +64,7 @@ float min(float x, float y)
 // y coordinate. They all have an upper bound on minimum distance as d.
 // Note that this method seems to be a O(n^2) method, but it's a O(n)
 // method as the inner loop runs at most 6 times
-float stripClosest(Point strip[], int size, float d)
+float stripClosest(Point strip[], int size, float d, Point minPoint[])
 {
 	float min = d; // Initialize the minimum distance as d
 
@@ -79,11 +83,11 @@ float stripClosest(Point strip[], int size, float d)
 
 // A recursive function to find the smallest distance. The array P contains
 // all points sorted according to x coordinate
-float closestUtil(Point P[], int n)
+float closestUtil(Point P[], int n, Point minPoint[])
 {
 	// If there are 2 or 3 points, then use brute force
 	if (n <= 3)
-		return bruteForce(P, n);
+		return bruteForce(P, n, minPoint);
 
 	// Find the middle point
 	int mid = n/2;
@@ -92,8 +96,8 @@ float closestUtil(Point P[], int n)
 	// Consider the vertical line passing through the middle point
 	// calculate the smallest distance dl on left of middle point and
 	// dr on right side
-	float dl = closestUtil(P, mid);
-	float dr = closestUtil(P + mid, n-mid);
+	float dl = closestUtil(P, mid, minPoint);
+	float dr = closestUtil(P + mid, n-mid, minPoint);
 
 	// Find the smaller of two distances
 	float d = min(dl, dr);
@@ -109,17 +113,17 @@ float closestUtil(Point P[], int n)
 
 	// Find the closest points in strip. Return the minimum of d and closest
 	// distance is strip[]
-	return min(d, stripClosest(strip, j, d) );
+	return min(d, stripClosest(strip, j, d, minPoint) );
 }
 
 // The main function that finds the smallest distance
 // This method mainly uses closestUtil()
-float closest(Point P[], int n)
+float closest(Point P[], int n, Point minPoint[])
 {
 	qsort(P, n, sizeof(Point), compareX);
 
 	// Use recursive function closestUtil() to find the smallest distance
-	return closestUtil(P, n);
+	return closestUtil(P, n, minPoint);
 }
 
 Point create_points_list(FILE *file, Point* points) {
@@ -173,8 +177,16 @@ int main(int argc, char *argv[]) {
     /* Close file */
     fclose (file);
 
+	Point minPoints[2]; 
 	int n = sizeof(points) / sizeof(points[0]);
-	printf("The smallest distance is %lf \n", closest(points, n));
-	printf("The smallest distance (brute force) is %lf \n", bruteForce(points, n));
+	printf("The smallest distance (optimized) is %lf \n", closest(points, n,minPoints));
+	//printf("Closest points (optimized): \n");
+	//printf("%lf %lf \n", minPoints[0].x, minPoints[0].y);
+	//printf("%lf %lf \n", minPoints[1].x, minPoints[1].y);
+
+	printf("The smallest distance (brute force) is %lf \n", bruteForce(points, n, minPoints));
+	printf("Closest points (brute force): \n");
+	printf("%lf %lf \n", minPoints[0].x, minPoints[0].y);
+	printf("%lf %lf \n", minPoints[1].x, minPoints[1].y);
 	return 0;
 }
