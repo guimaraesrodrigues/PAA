@@ -8,4 +8,4 @@ Trabalhos 1 e 2
 - On MacOS: `gcc main.c -o closest`
 
 # Run
-`./closest.txt`
+`./closest`
