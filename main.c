@@ -122,20 +122,21 @@ float closest(Point P[], int n)
 	return closestUtil(P, n);
 }
 
-Point string_to_points(char str[]) {
+Point create_points_list(FILE *file, Point* points) {
     Point p;
 
-    sscanf(str, "%lf", &p.x);
+	int ret = 0;
+	int n_lines = 0;
+	char line_buffer[50]; //buffer to be used for each line
 
-    // printf("%lf", p.x);
-
-    // while(token != NULL) {
-    //   sscanf(token, "%lf", &aux);
-    //   p.x = aux;
-    //   sscanf(token, "%lf", &aux);
-    //   p.y = aux;
-    //   token = strtok(NULL, " ");
-    // }
+	while(fgets(line_buffer, sizeof line_buffer, file)) {
+		ret = sscanf(line_buffer, "%lf %lf", &p.x, &p.y);
+		if(ret < 1)
+			continue;
+		points[n_lines].x = p.x;
+		points[n_lines].y = p.y;
+		n_lines++;
+	}
 
     return p;
 }
@@ -164,19 +165,15 @@ int main(int argc, char *argv[]) {
 
     Point points[n_pairs];
 
-    char line_buffer[80]; //buffer to be used for each line
-    int n_lines = 0;
-    while (!feof (file)) {
-        if (fgets(line_buffer, sizeof(line_buffer), file)) {
-            points[n_lines] = string_to_points(line_buffer);
-            n_lines++;
-        }
-    }
+	create_points_list(file, points);// Create list of pairs based on input.txt
+	
+	for (int i = 0; i < n_pairs; i++)
+		printf("%lf %lf \n", points[i].x, points[i].y);
 
-    /* Done */
+    /* Close file */
     fclose (file);
 
-	// int n = sizeof(P) / sizeof(P[0]);
-	// printf("The smallest distance is %f ", closest(P, n));
+	int n = sizeof(points) / sizeof(points[0]);
+	printf("The smallest distance is %lf \n", closest(points, n));
 	return 0;
 }
