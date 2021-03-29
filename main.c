@@ -175,5 +175,6 @@ int main(int argc, char *argv[]) {
 
 	int n = sizeof(points) / sizeof(points[0]);
 	printf("The smallest distance is %lf \n", closest(points, n));
+	printf("The smallest distance (brute force) is %lf \n", bruteForce(points, n));
 	return 0;
 }
