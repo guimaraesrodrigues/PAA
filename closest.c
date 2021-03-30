@@ -12,21 +12,18 @@ typedef struct Ponto {
 Refer: http://www.cplusplus.com/reference/clibrary/cstdlib/qsort/ */
 
 // Needed to sort array of points according to X coordinate
-int compareX(const void* a, const void* b)
-{
+int compareX(const void* a, const void* b) {
 	Ponto *p1 = (Ponto *)a, *p2 = (Ponto *)b;
 	return (p1->x - p2->x);
 }
 // Needed to sort array of points according to Y coordinate
-int compareY(const void* a, const void* b)
-{
+int compareY(const void* a, const void* b) {
 	Ponto *p1 = (Ponto *)a, *p2 = (Ponto *)b;
 	return (p1->y - p2->y);
 }
 
 // A utility function to find the distance between two points
-float dist(Ponto p1, Ponto p2)
-{
+float dist(Ponto p1, Ponto p2) {
 	return sqrt( (p1.x - p2.x)*(p1.x - p2.x) +
 				(p1.y - p2.y)*(p1.y - p2.y)
 			);
@@ -34,8 +31,7 @@ float dist(Ponto p1, Ponto p2)
 
 // A Brute Force method to return the smallest distance between two points
 // in P[] of size n
-float bruteForce(Ponto P[], int n, Ponto minPoints[])
-{
+float bruteForce(Ponto P[], int n, Ponto minPoints[]) {
 	float min = FLT_MAX;
 
 	for (int i = 0; i < n; ++i)
@@ -49,9 +45,8 @@ float bruteForce(Ponto P[], int n, Ponto minPoints[])
 }
 
 // A utility function to find a minimum of two float values
-float min(float x, float y)
-{
-	return (x < y)? x : y;
+float min(float x, float y) {
+	return (x < y) ? x : y;
 }
 
 
@@ -60,8 +55,7 @@ float min(float x, float y)
 // y coordinate. They all have an upper bound on minimum distance as d.
 // Note that this method seems to be a O(n^2) method, but it's a O(n)
 // method as the inner loop runs at most 6 times
-float stripClosest(Ponto strip[], int size, float d, Ponto minPoint[])
-{
+float stripClosest(Ponto strip[], int size, float d, Ponto minPoint[]) {
 	float min = d; // Initialize the minimum distance as d
 
 	qsort(strip, size, sizeof(Ponto), compareY);
@@ -70,7 +64,7 @@ float stripClosest(Ponto strip[], int size, float d, Ponto minPoint[])
 	// between y coordinates is smaller than d.
 	// This is a proven fact that this loop runs at most 6 times
 	for (int i = 0; i < size; ++i)
-		for (int j = i+1; j < size && (strip[j].y - strip[i].y) < min; ++j)
+		for (int j = i + 1; j < size && (strip[j].y - strip[i].y) < min; ++j)
 			if (dist(strip[i],strip[j]) < min)
 				min = dist(strip[i], strip[j]);
 
@@ -79,8 +73,7 @@ float stripClosest(Ponto strip[], int size, float d, Ponto minPoint[])
 
 // A recursive function to find the smallest distance. The array P contains
 // all points sorted according to x coordinate
-float closestUtil(Ponto P[], int n, Ponto minPoint[])
-{
+float closestUtil(Ponto P[], int n, Ponto minPoint[]) {
 	// If there are 2 or 3 points, then use brute force
 	if (n <= 3){
 		float min = FLT_MAX;
@@ -101,7 +94,7 @@ float closestUtil(Ponto P[], int n, Ponto minPoint[])
 	// calculate the smallest distance dl on left of middle point and
 	// dr on right side
 	float dl = closestUtil(P, mid, minPoint);
-	float dr = closestUtil(P + mid, n-mid, minPoint);
+	float dr = closestUtil(P + mid, n - mid, minPoint);
 
 	// Find the smaller of two distances
 	float d = min(dl, dr);
@@ -112,7 +105,7 @@ float closestUtil(Ponto P[], int n, Ponto minPoint[])
 	int j = 0;
 	for (int i = 0; i < n; i++)
 		// if (abs(P[i].x - midPoint.x) < d)
-        if (P[i].x - midPoint.x < d)
+        if ((P[i].x - midPoint.x) < d)
 			strip[j] = P[i], j++;
 
 	// Find the closest points in strip. Return the minimum of d and closest
@@ -122,21 +115,23 @@ float closestUtil(Ponto P[], int n, Ponto minPoint[])
 
 // The main function that finds the smallest distance
 // This method mainly uses closestUtil()
-float closest(Ponto P[], int n, Ponto minPoint[])
-{
+float closest(Ponto P[], int n, Ponto minPoint[]) {
 	qsort(P, n, sizeof(Ponto), compareX);
 
 	// Use recursive function closestUtil() to find the smallest distance
 	return closestUtil(P, n, minPoint);
 }
 
-Ponto create_points_list(FILE *file, Ponto* points) {
+// Cria uma lista pontos P baseado no arquivo passado como parâmetro
+Ponto createPointsList(FILE *file, Ponto* points) {
     Ponto p;
 
 	int ret = 0;
 	int n_lines = 0;
-	char line_buffer[50]; //buffer to be used for each line
+	char line_buffer[50]; //buffer a ser utilizado na leitura de cada linha
 
+	// Percorre a stream, identifica as duas coordenadas na linha
+	// e adiciona o valor no array points
 	while(fgets(line_buffer, sizeof line_buffer, file)) {
 		ret = sscanf(line_buffer, "%lf %lf", &p.x, &p.y);
 		if(ret < 1)
@@ -168,12 +163,12 @@ int main(int argc, char *argv[]) {
 
     char first_line[10];
     int n_pairs;
-    fscanf(file, "%s", first_line);
+    fscanf(file, "%s", first_line); // Le a primeira linha do arquivo para saber quantos pares foram gerados
     sscanf(first_line, "%d", &n_pairs);//convert string to int
 
     Ponto points[n_pairs];
 
-	create_points_list(file, points);// Create list of pairs based on input.txt
+	createPointsList(file, points);// Create list of pairs based on input.txt
 	
 	for (int i = 0; i < n_pairs; i++)
 		printf("%lf %lf \n", points[i].x, points[i].y);
