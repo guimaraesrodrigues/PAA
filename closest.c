@@ -4,8 +4,7 @@
 #include <math.h>
 
 // Struct para representar o ponto
-typedef struct Ponto
-{
+typedef struct Ponto {
 	double x, y;
 } Ponto;
 
