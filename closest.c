@@ -8,6 +8,65 @@ typedef struct Ponto {
 	double x, y;
 } Ponto;
 
+void merge(int arr[], int l, int m, int r) {
+	int i, j, k;
+	int n1 = m - l + 1;
+	int n2 = r - m;
+
+	int L[n1], R[n2];
+
+	/* Copy data to temp arrays L[] and R[] */
+	for (i = 0; i < n1; i++)
+		L[i] = arr[l + i];
+	for (j = 0; j < n2; j++)
+		R[j] = arr[m + 1+ j];
+
+	/* Merge the temp arrays back into arr[l..r]*/
+	i = 0; 
+	j = 0; 
+	k = l;
+	while (i < n1 && j < n2) {
+		if (L[i] <= R[j]) {
+			arr[k] = L[i];
+			i++;
+		}
+		else {
+			arr[k] = R[j];
+			j++;
+		}
+		k++;
+	}
+
+	/* Copy the remaining elements of L[], if there
+	are any */
+	while (i < n1) {
+		arr[k] = L[i];
+		i++;
+		k++;
+	}
+
+	/* Copy the remaining elements of R[], if there
+	are any */
+	while (j < n2) {
+		arr[k] = R[j];
+		j++;
+		k++;
+	}
+}
+
+void mergeSort(int arr[], int l, int r) {
+	if (l < r) {
+		int m = l+(r-l)/2;
+
+		// Sort first and second halves
+		mergeSort(arr, l, m);
+		mergeSort(arr, m+1, r);
+
+		merge(arr, l, m, r);
+	}
+}
+
+
 /* Following two functions are needed for library function qsort().
 Refer: http://www.cplusplus.com/reference/clibrary/cstdlib/qsort/ */
 
@@ -57,6 +116,8 @@ float min(float x, float y) {
 // method as the inner loop runs at most 6 times
 float stripClosest(Ponto strip[], int size, float d, Ponto minPoint[]) {
 	float min = d; // Initialize the minimum distance as d
+
+	// mergeSort(strip, 0, size - 1);
 
 	qsort(strip, size, sizeof(Ponto), compareY);
 
@@ -116,6 +177,8 @@ float closestUtil(Ponto P[], int n, Ponto minPoint[]) {
 // The main function that finds the smallest distance
 // This method mainly uses closestUtil()
 float closest(Ponto P[], int n, Ponto minPoint[]) {
+	
+	// mergeSort(P, n, sizeof(P) - 1);
 	qsort(P, n, sizeof(Ponto), compareX);
 
 	// Use recursive function closestUtil() to find the smallest distance
@@ -145,6 +208,14 @@ Ponto createPointsList(FILE *file, Ponto* points) {
 }
 
 
+void test() {
+	int arr[] = { 12, 11, 13, 5, 6, 7 };
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+ 
+    mergeSort(arr, 0, arr_size - 1);
+}
+
+
 int main(int argc, char *argv[]) {
     FILE *file = NULL;
 
@@ -164,21 +235,20 @@ int main(int argc, char *argv[]) {
     char first_line[10];
     int n_pairs;
     fscanf(file, "%s", first_line); // Le a primeira linha do arquivo para saber quantos pares foram gerados
-    sscanf(first_line, "%d", &n_pairs);//convert string to int
+    sscanf(first_line, "%d", &n_pairs);//converte string para int
 
     Ponto points[n_pairs];
 
-	createPointsList(file, points);// Create list of pairs based on input.txt
-	
-	for (int i = 0; i < n_pairs; i++)
-		printf("%lf %lf \n", points[i].x, points[i].y);
+	createPointsList(file, points);// Cria lista de pares com base no arquivo input.txt
 
     /* Close file */
     fclose (file);
 
 	Ponto minPoints[2]; 
 	int n = sizeof(points) / sizeof(points[0]);
-	printf("The smallest distance (optimized) is %lf \n", closest(points, n,minPoints));
+
+	printf("The smallest distance (optimized) is %lf \n", closest(points, n, minPoints));
+
 	//printf("Closest points (optimized): \n");
 	//printf("%lf %lf \n", minPoints[0].x, minPoints[0].y);
 	//printf("%lf %lf \n", minPoints[1].x, minPoints[1].y);

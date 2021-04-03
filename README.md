@@ -9,3 +9,8 @@ Trabalhos 1 e 2
 
 # Run
 `./closest`
+
+# References
+
+- https://www.geeksforgeeks.org/closest-pair-of-points-using-divide-and-conquer-algorithm/
+- https://www.youtube.com/watch?v=vS4Zn1a9KUc
