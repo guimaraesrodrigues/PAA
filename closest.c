@@ -184,8 +184,8 @@ float closestUtil(Ponto pontos[], int n_pairs, Ponto closestPoints[]) {
 			for (int j = i+1; j < n_pairs; ++j)
 				if (dist(pontos[i], pontos[j]) < min) {
 					min = dist(pontos[i], pontos[j]);
-					closestPoints[0] = pontos[i];
-					closestPoints[1] = pontos[j];
+					// closestPoints[0] = pontos[i];
+					// closestPoints[1] = pontos[j];
 				}
 		
 		return min;
