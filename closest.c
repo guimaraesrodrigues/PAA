@@ -8,25 +8,25 @@ typedef struct Ponto {
 	float x, y;
 } Ponto;
 
-void merge(float arr[], int l, int m, int r) {
+void mergeX(Ponto arr[], int left, int mid, int right) {
 	int i, j, k;
-	int n1 = m - l + 1;
-	int n2 = r - m;
+	int n1 = mid - left + 1;
+	int n2 = right - mid;
 
-	int L[n1], R[n2];
+	Ponto L[n1], R[n2];
 
 	/* Copy data to temp arrays L[] and R[] */
 	for (i = 0; i < n1; i++)
-		L[i] = arr[l + i];
+		L[i] = arr[left + i];
 	for (j = 0; j < n2; j++)
-		R[j] = arr[m + 1+ j];
+		R[j] = arr[mid + 1+ j];
 
-	/* Merge the temp arrays back into arr[l..r]*/
+	/* Merge the temp arrays back into arr[left..right]*/
 	i = 0; 
 	j = 0; 
-	k = l;
+	k = left;
 	while (i < n1 && j < n2) {
-		if (L[i] <= R[j]) {
+		if (L[i].x <= R[j].x) {
 			arr[k] = L[i];
 			i++;
 		}
@@ -54,15 +54,73 @@ void merge(float arr[], int l, int m, int r) {
 	}
 }
 
-void mergeSort(float arr[], int l, int r) {
-	if (l < r) {
-		int m = l+(r-l)/2;
+void mergeSortX(Ponto arr[], int left, int right) {
+	if (left < right) {
+		int mid = left+(right-left)/2;
 
 		// Sort first and second halves
-		mergeSort(arr, l, m);
-		mergeSort(arr, m+1, r);
+		mergeSortX(arr, left, mid);
+		mergeSortX(arr, mid+1, right);
 
-		merge(arr, l, m, r);
+		mergeX(arr, left, mid, right);
+	}
+}
+
+void mergeY(Ponto arr[], int left, int mid, int right) {
+	int i, j, k;
+	int n1 = mid - left + 1;
+	int n2 = right - mid;
+
+	Ponto L[n1], R[n2];
+
+	/* Copy data to temp arrays L[] and R[] */
+	for (i = 0; i < n1; i++)
+		L[i] = arr[left + i];
+	for (j = 0; j < n2; j++)
+		R[j] = arr[mid + 1+ j];
+
+	/* Merge the temp arrays back into arr[left..right]*/
+	i = 0; 
+	j = 0; 
+	k = left;
+	while (i < n1 && j < n2) {
+		if (L[i].y <= R[j].y) {
+			arr[k] = L[i];
+			i++;
+		}
+		else {
+			arr[k] = R[j];
+			j++;
+		}
+		k++;
+	}
+
+	/* Copy the remaining elements of L[], if there
+	are any */
+	while (i < n1) {
+		arr[k] = L[i];
+		i++;
+		k++;
+	}
+
+	/* Copy the remaining elements of R[], if there
+	are any */
+	while (j < n2) {
+		arr[k] = R[j];
+		j++;
+		k++;
+	}
+}
+
+void mergeSortY(Ponto arr[], int left, int right) {
+	if (left < right) {
+		int mid = left+(right-left)/2;
+
+		// Sort first and second halves
+		mergeSortY(arr, left, mid);
+		mergeSortY(arr, mid+1, right);
+
+		mergeY(arr, left, mid, right);
 	}
 }
 
@@ -119,9 +177,9 @@ float min(float x, float y) {
 float stripClosest(Ponto strip[], int size, float d, Ponto minPoint[]) {
 	float min = d; // Initialize the minimum distance as d
 
-	// mergeSort(strip, 0, size - 1);
+	mergeSortY(strip, 0, size - 1);
 
-	qsort(strip, size, sizeof(Ponto), compareY);
+	// qsort(strip, size, sizeof(Ponto), compareY);
 
 	// Pick all points one by one and try the next points till the difference
 	// between y coordinates is smaller than d.
@@ -136,28 +194,27 @@ float stripClosest(Ponto strip[], int size, float d, Ponto minPoint[]) {
 
 // A recursive function to find the smallest distance. The array P contains
 // all points sorted according to x coordinate
-float closestUtil(Ponto P[], int n_pairs, Ponto minPoint[]) {
+float closestUtil(Ponto pontos[], int n_pairs, Ponto minPoint[]) {
 	// If there are 2 or 3 points, then use brute force
 	if (n_pairs <= 3){
 		float min = FLT_MAX;
-
 		for (int i = 0; i < n_pairs; ++i)
 			for (int j = i+1; j < n_pairs; ++j)
-				if (dist(P[i], P[j]) < min)
-					min = dist(P[i], P[j]);
+				if (dist(pontos[i], pontos[j]) < min)
+					min = dist(pontos[i], pontos[j]);
 		
 		return min;
 	}
 
 	// Find the middle point
 	int mid = n_pairs/2;
-	Ponto midPoint = P[mid];
+	Ponto midPoint = pontos[mid];
 
 	// Consider the vertical line passing through the middle point
 	// calculate the smallest distance dl on left of middle point and
 	// dr on right side
-	float dl = closestUtil(P, mid, minPoint);
-	float dr = closestUtil(P + mid, n_pairs - mid, minPoint);
+	float dl = closestUtil(pontos, mid, minPoint);
+	float dr = closestUtil(pontos + mid, n_pairs - mid, minPoint);
 
 	// Find the smaller of two distances
 	float d = min(dl, dr);
@@ -167,9 +224,8 @@ float closestUtil(Ponto P[], int n_pairs, Ponto minPoint[]) {
 	Ponto strip[n_pairs];
 	int j = 0;
 	for (int i = 0; i < n_pairs; i++)
-		// if (abs(P[i].x - midPoint.x) < d)
-        if ((P[i].x - midPoint.x) < d)
-			strip[j] = P[i], j++;
+        if ((pontos[i].x - midPoint.x) < d)
+			strip[j] = pontos[i], j++;
 
 	// Find the closest points in strip. Return the minimum of d and closest
 	// distance is strip[]
@@ -178,18 +234,16 @@ float closestUtil(Ponto P[], int n_pairs, Ponto minPoint[]) {
 
 // The main function that finds the smallest distance
 // This method mainly uses closestUtil()
-float closest(Ponto P[], int n_pairs, Ponto minPoint[]) {
+float closest(Ponto pontos[], int n_pairs, Ponto minPoint[]) {
 	
-	// mergeSort(P, n_pairs, sizeof(P) - 1);
-
-	qsort(P, n_pairs, sizeof(Ponto), compareX);
+	mergeSortX(pontos, 0, n_pairs - 1);
 
 	// Use recursive function closestUtil() to find the smallest distance
-	return closestUtil(P, n_pairs, minPoint);
+	return closestUtil(pontos, n_pairs, minPoint);
 }
 
 // Cria uma lista pontos P baseado no arquivo passado como parâmetro
-void createPointsList(FILE *file, Ponto* points) {
+void createPointsList(FILE *file, Ponto* pontos) {
     Ponto p;
 
 	int ret = 0;
@@ -197,25 +251,16 @@ void createPointsList(FILE *file, Ponto* points) {
 	char line_buffer[50]; //buffer a ser utilizado na leitura de cada linha
 
 	// Percorre a stream, identifica as duas coordenadas na linha
-	// e adiciona o valor no array points
+	// e adiciona o valor no array pontos
 	while(fgets(line_buffer, sizeof line_buffer, file)) {
 		ret = sscanf(line_buffer, "%f %f", &p.x, &p.y);
 		if(ret < 1)
 			continue;
-		points[n_lines].x = p.x;
-		points[n_lines].y = p.y;
+		pontos[n_lines].x = p.x;
+		pontos[n_lines].y = p.y;
 		n_lines++;
 	}
 }
-
-
-void test() {
-	float arr[] = { 12, 11, 13, 5, 6, 7 };
-    int arr_size = sizeof(arr) / sizeof(arr[0]);
- 
-    mergeSort(arr, 0, arr_size - 1);
-}
-
 
 int main(int argc, char *argv[]) {
     FILE *file = NULL;
@@ -238,21 +283,21 @@ int main(int argc, char *argv[]) {
     fscanf(file, "%s", first_line); // Le a primeira linha do arquivo para saber quantos pares foram gerados
     sscanf(first_line, "%d", &n_pairs);//converte string para int
 
-    Ponto points[n_pairs];
+    Ponto pontos[n_pairs];
 
-	createPointsList(file, points);// Cria lista de pares com base no arquivo input.txt
+	createPointsList(file, pontos);// Cria lista de pares com base no arquivo input.txt
 
     fclose (file);
 
 	Ponto minPoints[2];//Armazena os pontos mais próximos
 
-	printf("The smallest distance (optimized) is %f \n", closest(points, n_pairs, minPoints));
+	printf("The smallest distance (optimized) is %f \n", closest(pontos, n_pairs, minPoints));
 
-	//printf("Closest points (optimized): \n");
-	//printf("%lf %lf \n", minPoints[0].x, minPoints[0].y);
-	//printf("%lf %lf \n", minPoints[1].x, minPoints[1].y);
+	printf("Closest points (optimized): \n");
+	printf("%f %f \n", minPoints[0].x, minPoints[0].y);
+	printf("%f %f \n", minPoints[1].x, minPoints[1].y);
 
-	printf("The smallest distance (brute force) is %f \n", bruteForce(points, n_pairs, minPoints));
+	printf("The smallest distance (brute force) is %f \n", bruteForce(pontos, n_pairs, minPoints));
 	printf("Closest points (brute force): \n");
 	printf("%f %f \n", minPoints[0].x, minPoints[0].y);
 	printf("%f %f \n", minPoints[1].x, minPoints[1].y);
