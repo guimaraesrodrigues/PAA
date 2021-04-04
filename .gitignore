@@ -54,3 +54,5 @@ dkms.conf
 #Others
 .vscode
 *.txt
+closest
+genpoints
