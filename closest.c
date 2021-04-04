@@ -124,24 +124,6 @@ void mergeSortY(Ponto arr[], int left, int right) {
 	}
 }
 
-
-/* Following two functions are needed for library function qsort().
-Refer: http://www.cplusplus.com/reference/clibrary/cstdlib/qsort/ */
-
-//TODO: REMOVE WHEN MERGESORT IMPLEMENTED
-// Needed to sort array of points according to X coordinate
-int compareX(const void* a, const void* b) {
-	Ponto *p1 = (Ponto *)a, *p2 = (Ponto *)b;
-	return (p1->x - p2->x);
-}
-
-//TODO: REMOVE WHEN MERGESORT IMPLEMENTED
-// Needed to sort array of points according to Y coordinate
-int compareY(const void* a, const void* b) {
-	Ponto *p1 = (Ponto *)a, *p2 = (Ponto *)b;
-	return (p1->y - p2->y);
-}
-
 // A utility function to find the distance between two points
 float dist(Ponto p1, Ponto p2) {
 	return sqrt( (p1.x - p2.x)*(p1.x - p2.x) +
@@ -174,34 +156,37 @@ float min(float x, float y) {
 // y coordinate. They all have an upper bound on minimum distance as d.
 // Note that this method seems to be a O(n^2) method, but it's a O(n)
 // method as the inner loop runs at most 6 times
-float stripClosest(Ponto strip[], int size, float d, Ponto minPoint[]) {
+float stripClosest(Ponto strip[], int size, float d, Ponto closestPoints[]) {
 	float min = d; // Initialize the minimum distance as d
 
 	mergeSortY(strip, 0, size - 1);
-
-	// qsort(strip, size, sizeof(Ponto), compareY);
 
 	// Pick all points one by one and try the next points till the difference
 	// between y coordinates is smaller than d.
 	// This is a proven fact that this loop runs at most 6 times
 	for (int i = 0; i < size; ++i)
 		for (int j = i + 1; j < size && (strip[j].y - strip[i].y) < min; ++j)
-			if (dist(strip[i],strip[j]) < min)
+			if (dist(strip[i],strip[j]) < min) {
 				min = dist(strip[i], strip[j]);
-
+				closestPoints[0] = strip[i];
+				closestPoints[1] = strip[j];
+			}
 	return min;
 }
 
-// A recursive function to find the smallest distance. The array P contains
+// A recursive function to find the smallest distance. The array pontos contains
 // all points sorted according to x coordinate
-float closestUtil(Ponto pontos[], int n_pairs, Ponto minPoint[]) {
+float closestUtil(Ponto pontos[], int n_pairs, Ponto closestPoints[]) {
 	// If there are 2 or 3 points, then use brute force
 	if (n_pairs <= 3){
 		float min = FLT_MAX;
 		for (int i = 0; i < n_pairs; ++i)
 			for (int j = i+1; j < n_pairs; ++j)
-				if (dist(pontos[i], pontos[j]) < min)
+				if (dist(pontos[i], pontos[j]) < min) {
 					min = dist(pontos[i], pontos[j]);
+					closestPoints[0] = pontos[i];
+					closestPoints[1] = pontos[j];
+				}
 		
 		return min;
 	}
@@ -213,8 +198,8 @@ float closestUtil(Ponto pontos[], int n_pairs, Ponto minPoint[]) {
 	// Consider the vertical line passing through the middle point
 	// calculate the smallest distance dl on left of middle point and
 	// dr on right side
-	float dl = closestUtil(pontos, mid, minPoint);
-	float dr = closestUtil(pontos + mid, n_pairs - mid, minPoint);
+	float dl = closestUtil(pontos, mid, closestPoints);
+	float dr = closestUtil(pontos + mid, n_pairs - mid, closestPoints);
 
 	// Find the smaller of two distances
 	float d = min(dl, dr);
@@ -229,17 +214,17 @@ float closestUtil(Ponto pontos[], int n_pairs, Ponto minPoint[]) {
 
 	// Find the closest points in strip. Return the minimum of d and closest
 	// distance is strip[]
-	return min(d, stripClosest(strip, j, d, minPoint) );
+	return min(d, stripClosest(strip, j, d, closestPoints));
 }
 
 // The main function that finds the smallest distance
 // This method mainly uses closestUtil()
-float closest(Ponto pontos[], int n_pairs, Ponto minPoint[]) {
+float closest(Ponto pontos[], int n_pairs, Ponto closestPoints[]) {
 	
 	mergeSortX(pontos, 0, n_pairs - 1);
 
 	// Use recursive function closestUtil() to find the smallest distance
-	return closestUtil(pontos, n_pairs, minPoint);
+	return closestUtil(pontos, n_pairs, closestPoints);
 }
 
 // Cria uma lista pontos P baseado no arquivo passado como parâmetro
