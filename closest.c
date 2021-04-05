@@ -2,10 +2,11 @@
 #include <float.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 // Struct para representar o ponto
 typedef struct Ponto {
-	float x, y;
+	double x, y;
 } Ponto;
 
 void mergeX(Ponto arr[], int left, int mid, int right) {
@@ -125,7 +126,7 @@ void mergeSortY(Ponto arr[], int left, int right) {
 }
 
 // A utility function to find the distance between two points
-float dist(Ponto p1, Ponto p2) {
+double dist(Ponto p1, Ponto p2) {
 	return sqrt( (p1.x - p2.x)*(p1.x - p2.x) +
 				(p1.y - p2.y)*(p1.y - p2.y)
 			);
@@ -133,8 +134,8 @@ float dist(Ponto p1, Ponto p2) {
 
 // A Brute Force method to return the smallest distance between two points
 // in P[] of size n
-float bruteForce(Ponto P[], int n_pairs, Ponto minPoints[]) {
-	float min = FLT_MAX;
+double bruteForce(Ponto P[], int n_pairs, Ponto minPoints[]) {
+	double min = FLT_MAX;
 
 	for (int i = 0; i < n_pairs; ++i)
 		for (int j = i+1; j < n_pairs; ++j)
@@ -146,8 +147,8 @@ float bruteForce(Ponto P[], int n_pairs, Ponto minPoints[]) {
 	return min;
 }
 
-// A utility function to find a minimum of two float values
-float min(float x, float y) {
+// A utility function to find a minimum of two double values
+double min(double x, double y) {
 	return (x < y) ? x : y;
 }
 
@@ -156,8 +157,8 @@ float min(float x, float y) {
 // y coordinate. They all have an upper bound on minimum distance as d.
 // Note that this method seems to be a O(n^2) method, but it's a O(n)
 // method as the inner loop runs at most 6 times
-float stripClosest(Ponto strip[], int size, float d, Ponto closestPoints[]) {
-	float min = d; // Initialize the minimum distance as d
+double stripClosest(Ponto strip[], int size, double d, Ponto closestPoints[]) {
+	double min = d; // Initialize the minimum distance as d
 
 	mergeSortY(strip, 0, size - 1);
 
@@ -176,10 +177,10 @@ float stripClosest(Ponto strip[], int size, float d, Ponto closestPoints[]) {
 
 // A recursive function to find the smallest distance. The array pontos contains
 // all points sorted according to x coordinate
-float closestUtil(Ponto pontos[], int n_pairs, Ponto closestPoints[]) {
+double closestUtil(Ponto pontos[], int n_pairs, Ponto closestPoints[]) {
 	// If there are 2 or 3 points, then use brute force
 	if (n_pairs <= 3){
-		float min = FLT_MAX;
+		double min = FLT_MAX;
 		for (int i = 0; i < n_pairs; ++i)
 			for (int j = i+1; j < n_pairs; ++j)
 				if (dist(pontos[i], pontos[j]) < min) {
@@ -198,11 +199,11 @@ float closestUtil(Ponto pontos[], int n_pairs, Ponto closestPoints[]) {
 	// Consider the vertical line passing through the middle point
 	// calculate the smallest distance dl on left of middle point and
 	// dr on right side
-	float dl = closestUtil(pontos, mid, closestPoints);
-	float dr = closestUtil(pontos + mid, n_pairs - mid, closestPoints);
+	double dl = closestUtil(pontos, mid, closestPoints);
+	double dr = closestUtil(pontos + mid, n_pairs - mid, closestPoints);
 
 	// Find the smaller of two distances
-	float d = min(dl, dr);
+	double d = min(dl, dr);
 
 	// Build an array strip[] that contains points close (closer than d)
 	// to the line passing through the middle point
@@ -219,7 +220,7 @@ float closestUtil(Ponto pontos[], int n_pairs, Ponto closestPoints[]) {
 
 // The main function that finds the smallest distance
 // This method mainly uses closestUtil()
-float closest(Ponto pontos[], int n_pairs, Ponto closestPoints[]) {
+double closest(Ponto pontos[], int n_pairs, Ponto closestPoints[]) {
 	
 	mergeSortX(pontos, 0, n_pairs - 1);
 
@@ -233,17 +234,18 @@ void createPointsList(FILE *file, Ponto* pontos) {
 
 	int ret = 0;
 	int n_lines = 0;
-	char line_buffer[50]; //buffer a ser utilizado na leitura de cada linha
+	char line_buffer[100]; //buffer a ser utilizado na leitura de cada linha
 
 	// Percorre a stream, identifica as duas coordenadas na linha
 	// e adiciona o valor no array pontos
 	while(fgets(line_buffer, sizeof line_buffer, file)) {
-		ret = sscanf(line_buffer, "%f %f", &p.x, &p.y);
+		ret = sscanf(line_buffer, "%lf %lf", &p.x, &p.y);
 		if(ret < 1)
 			continue;
 		pontos[n_lines].x = p.x;
 		pontos[n_lines].y = p.y;
 		n_lines++;
+		printf("%lf %lf\n", p.x, p.y);
 	}
 }
 
@@ -276,15 +278,22 @@ int main(int argc, char *argv[]) {
 
 	Ponto minPoints[2];//Armazena os pontos mais próximos
 
-	printf("The smallest distance (optimized) is %f \n", closest(pontos, n_pairs, minPoints));
-
+	clock_t beginOpt = clock();
+	printf("The smallest distance (optimized) is %lf \n", closest(pontos, n_pairs, minPoints));
+	clock_t endOpt = clock();
+	
+	printf("Time spent: %lf \n", (double)(endOpt - beginOpt) / CLOCKS_PER_SEC);
 	printf("Closest points (optimized): \n");
-	printf("%f %f \n", minPoints[0].x, minPoints[0].y);
-	printf("%f %f \n", minPoints[1].x, minPoints[1].y);
+	printf("%lf %lf \n", minPoints[0].x, minPoints[0].y);
+	printf("%lf %lf \n", minPoints[1].x, minPoints[1].y);
 
-	printf("The smallest distance (brute force) is %f \n", bruteForce(pontos, n_pairs, minPoints));
+	clock_t beginBF = clock();
+	printf("The smallest distance (brute force) is %lf \n", bruteForce(pontos, n_pairs, minPoints));
+	clock_t endBF = clock();
+
+	printf("Time spent: %lf \n", (double)(endBF - beginBF) / CLOCKS_PER_SEC);
 	printf("Closest points (brute force): \n");
-	printf("%f %f \n", minPoints[0].x, minPoints[0].y);
-	printf("%f %f \n", minPoints[1].x, minPoints[1].y);
+	printf("%lf %lf \n", minPoints[0].x, minPoints[0].y);
+	printf("%lf %lf \n", minPoints[1].x, minPoints[1].y);
 	return 0;
 }
