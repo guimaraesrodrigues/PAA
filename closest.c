@@ -135,7 +135,10 @@ double stripPoints(Ponto strip[], int tam, double d, Ponto *p1, Ponto *p2)
 // All point in array P are sorted by x
 double closestUtil(Ponto P[], Ponto strip[], int n, Ponto *p1, Ponto *p2)
 {
-    static Ponto *ptemp1, *ptemp2, *ptemp3, *ptemp4;
+    Ponto *ptemp1 = malloc(sizeof(Ponto));
+	Ponto *ptemp2 = malloc(sizeof(Ponto));
+	Ponto *ptemp3 = malloc(sizeof(Ponto));
+	Ponto *ptemp4 = malloc(sizeof(Ponto));
 
     // use brute force when there are not enough points
     if (n <= 3)
@@ -236,16 +239,19 @@ int main(int argc, char *argv[]) {
     fclose (file);
 
 	//Armazena os pontos mais próximos
-	Ponto *p1, *p2;
-	
-	p1->x, p1->y = MAX_VALUE;
-	p2->x, p2->y = MAX_VALUE;
+	Ponto *p1 = malloc(sizeof(Ponto));
+	Ponto *p2 = malloc(sizeof(Ponto));
+
+	p1->x = MAX_VALUE;
+	p1->y = MAX_VALUE;
+	p2->x = MAX_VALUE;
+	p2->y = MAX_VALUE;
 
 	// array to store points in a strip
     Ponto strip[n_pontos];
 
 	clock_t beginOpt = clock();
-	// printf("The smallest distance (optimized) is %lf \n", closest(pontos, strip, n_pontos, p1, p2));
+	printf("The smallest distance (optimized) is %lf \n", closest(pontos, strip, n_pontos, p1, p2));
 	clock_t endOpt = clock();
 	
 	printf("Time spent: %lf \n", (double)(endOpt - beginOpt) / CLOCKS_PER_SEC);
