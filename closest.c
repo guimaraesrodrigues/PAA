@@ -114,9 +114,9 @@ double stripPoints(Ponto strip[], int tam, double d, Ponto *p1, Ponto *p2)
         for (int j = i+1; j < tam && (strip[j].y - strip[i].y) < min; ++j)
             if (dist(strip[i],strip[j]) < min) {
                 min = dist(strip[i], strip[j]);
-		p1->x = strip[i].x, p1->y = strip[i].y;
-		p2->x = strip[j].x, p2->y = strip[j].y;
-	    }
+				p1->x = strip[i].x, p1->y = strip[i].y;
+				p2->x = strip[j].x, p2->y = strip[j].y;
+	    		}
  
     return min;
 }
@@ -144,11 +144,7 @@ double closestUtil(Ponto P[], Ponto strip[], int n, Ponto *p1, Ponto *p2)
     double dr = closestUtil(P + mid, strip, n-mid, ptemp3, ptemp4);
  
     // Escolhe o par com a menor distância
-    if(dl < dr) {
-		p1->x = ptemp1->x; p1->y = ptemp1->y;
-		p2->x = ptemp2->x; p2->y = ptemp2->y;
-    }
-    else {
+    if(dr <= dl) {
 		p1->x = ptemp3->x; p1->y = ptemp3->y;
 		p2->x = ptemp4->x; p2->y = ptemp4->y;
     }
@@ -238,22 +234,39 @@ int main(int argc, char *argv[]) {
 	// Array para armazenar pontos
     Ponto strip[n_pontos];
 
-	clock_t beginOpt = clock();
-	printf("Menor distância (otimizado) é %lf \n", closest(pontos, strip, n_pontos, p1, p2));
-	clock_t endOpt = clock();
-	
-	printf("Tempo gasto: %lf segundos\n", (double)(endOpt - beginOpt) / CLOCKS_PER_SEC);
-	printf("Pontos mais próximos (otimizado): \n");
-	printf("%lf %lf \n", p1->x, p1->y);
-	printf("%lf %lf \n", p2->x, p2->y);
+	double fbt, fbd, fbx1, fby1, fbx2, fby2, dct, dcd, dcx1, dcy1, dcx2, dcy2;
 
 	clock_t beginBF = clock();
-	printf("Menor distância (força bruta) é %lf \n", bruteForce(pontos, n_pontos,  p1, p2));
+
+	//menor distância força bruta
+	fbd = bruteForce(pontos, n_pontos,  p1, p2);
 	clock_t endBF = clock();
 
-	printf("Tempo gasto: %lf segundos\n", (double)(endBF - beginBF) / CLOCKS_PER_SEC);
-	printf("Pontos mais próximos (força bruta): \n");
-	printf("%lf %lf \n", p1->x, p1->y);
-	printf("%lf %lf \n", p2->x, p2->y);
+	//tempo força bruta
+	fbt = (double)(endBF - beginBF) / CLOCKS_PER_SEC;
+
+	//pontos mais próximos força bruta
+	fbx1 = p1->x;
+	fby1 = p1->y;
+	fbx2 = p2->x;
+	fby2 = p2->y;
+	
+	clock_t beginOpt = clock();
+
+	//menor distância otimizado
+	dcd = closest(pontos, strip, n_pontos, p1, p2);
+	clock_t endOpt = clock();
+
+	//tempo otimizado
+	dct = (double)(endOpt - beginOpt) / CLOCKS_PER_SEC;
+
+	//pontos mais próximos otimizado
+	dcx1 = p1->x;
+	dcy1 = p1->y;
+	dcx2 = p2->x;
+	dcy2 = p2->y;
+
+	printf("%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n", fbt, fbd, fbx1, fby1, fbx2, fby2, dct, dcd, dcx1, dcy1, dcx2, dcy2);
+	
 	return 0;
 }
