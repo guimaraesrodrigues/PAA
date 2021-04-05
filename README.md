@@ -13,4 +13,4 @@ Trabalhos 1 e 2
 # References
 
 - https://www.geeksforgeeks.org/closest-pair-of-points-using-divide-and-conquer-algorithm/
-- https://www.youtube.com/watch?v=vS4Zn1a9KUc
+- https://www.coursera.org/lecture/algorithms-divide-conquer/o-n-log-n-algorithm-for-closest-pair-i-advanced-optional-nf0jk
