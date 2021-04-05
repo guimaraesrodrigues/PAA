@@ -147,6 +147,9 @@ double closestUtil(Ponto P[], Ponto strip[], int n, Ponto *p1, Ponto *p2)
     if(dr <= dl) {
 		p1->x = ptemp3->x; p1->y = ptemp3->y;
 		p2->x = ptemp4->x; p2->y = ptemp4->y;
+    } else {
+    		p1->x = ptemp1->x; p1->y = ptemp1->y;
+		p2->x = ptemp2->x; p2->y = ptemp2->y;
     }
 
     double dmin = min(dl, dr);
