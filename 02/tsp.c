@@ -16,7 +16,7 @@
 // Struct para representar o ponto
 // Ponto = vértice
 typedef struct Ponto {
-    int id;
+  int id;
   float x, y;
   float key; // Para o algoritmo de PRIM
   int pai;  //para o algoritmo de PRIM - ID DO PONTO PAI
@@ -105,7 +105,7 @@ void criaGrafo(FILE *file, int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto
 void preencheGrafo(int n_pontos, Aresta grafo[n_pontos][n_pontos]) {
     for(int i = 1; i < n_pontos; i++)
         for(int j = 1; j < n_pontos; j++) 
-            //grafo[i][j], onde i == j, ja foi inicializada na funcao criaGrafo
+            //pula grafo[i][j], onde i == j, ja foi inicializada na funcao criaGrafo
             if( i != j) {
                 grafo[j][i] = inicializaAresta(grafo[i-1][j].fim, grafo[i][j-1].inicio);
                 
@@ -135,10 +135,10 @@ void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
             // a aresta é de fato ligada ao vértice que estou olhando?
             if (grafo[i][j].inicio.x == pai.x && grafo[i][j].inicio.y == pai.y ) {
                 if (i != j && grafo[i][j].distancia < vertices[j].key) {
-                    printf("%.0f\n",grafo[i][j].distancia );
+                    // printf("%.0f\n",grafo[i][j].distancia );
                     vertices[j].key = grafo[i][j].distancia;
                     vertices[j].pai = pai.id;
-                    printf("Id do pai: %d\n", vertices[j].pai);
+                    // printf("Id do pai: %d\n", vertices[j].pai);
                 }
             }
         }
@@ -146,10 +146,13 @@ void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
     }
 }
 
-void buscaProf(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[], Ponto busca[]){
+/**
+ * 
+ * **/
+Ponto buscaProf(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[], Ponto busca[]){
     Ponto goal = vertices[0];
     int v = 0;
-    for(int i=0; i < n_pontos; i++){
+    for(int i= 0; i < n_pontos; i++){
         if(vertices[i].id == goal.id){
             return vertices[i]; //encontrou o vertice inicial
         } else {
@@ -160,7 +163,31 @@ void buscaProf(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[],
             }
         }
     }
+};
+
+/**
+ * 
+ * 
+ * */
+void gravaAGM(int n_pontos, Ponto pontos[n_pontos]) {
+    FILE *fp = fopen("tree.txt", "w");
+	if (fp == NULL)
+	{
+		fprintf(stderr, "Falha ao criar tree.txt.\n");
+		return;
+	}
+    int n = 0;
+    while (n < n_pontos)
+	{
+        fprintf(fp, "%d %d\n", pontos[n].pai, pontos[n].id);
+        n++;
+	}
 }
+
+void gravaCiclo(int n_pontos, Ponto vertices[n_pontos]) {
+
+}
+
 
 int main(int argc, char *argv[]) {
     FILE *file = NULL; //variavel para input.txt
@@ -192,6 +219,7 @@ int main(int argc, char *argv[]) {
 
     prim(n_pontos, grafo, pontos);
 
+    gravaAGM(n_pontos, pontos);
    /*for(int i = 0; i < n_pontos; i ++)
     for(int j = 0; j < n_pontos; j ++) {
         printf("%d %d\n", i, j);
@@ -202,7 +230,7 @@ int main(int argc, char *argv[]) {
 
     for(int i = 0; i < n_pontos; i ++) {
         printf("*x: %.0f y: %.0f\n", pontos[i].x, pontos[i].y);
-        printf("key: %.2f\n", pontos[i].key);
+        printf("id: %d\n", pontos[i].id);
         printf("pai: %d\n", pontos[i].pai);
     }
 
