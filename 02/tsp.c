@@ -22,7 +22,7 @@ typedef struct Ponto {
   float key; // Para o algoritmo de PRIM
   int pai;  //para o algoritmo de PRIM - ID DO PONTO PAI
   int busca; //para busca em profundidade
-  Ponto *filhos;
+//   Ponto *filhos;
 } Ponto;
 
 // ARESTA: inicio -> fim com peso distancia
@@ -182,21 +182,21 @@ void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
 /**
  * 
  * **/
-Ponto buscaProf(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[], Ponto busca[]){
-    Ponto goal = vertices[0];
-    int v = 0;
-    for(int i= 0; i < n_pontos; i++){
-        if(vertices[i].id == goal.id){
-            return vertices[i]; //encontrou o vertice inicial
-        } else {
-            if (vertices[i].busca == -1){
-                //se ainda não foi visitado, coloca na lista e visita filhos
-                busca[v] = vertices[i];
-                buscaProf(n_pontos, grafo, vertices[i].filhos, busca);
-            }
-        }
-    }
-};
+// void buscaProf(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[], Ponto busca[]){
+//     Ponto goal = vertices[0];
+//     int v = 0;
+//     for(int i= 0; i < n_pontos; i++){
+//         if(vertices[i].id == goal.id){
+//             return vertices[i]; //encontrou o vertice inicial
+//         } else {
+//             if (vertices[i].busca == -1){
+//                 //se ainda não foi visitado, coloca na lista e visita filhos
+//                 busca[v] = vertices[i];
+//                 buscaProf(n_pontos, grafo, vertices[i].filhos, busca);
+//             }
+//         }
+//     }
+// };
 
 /**
  * 
@@ -209,12 +209,13 @@ void gravaAGM(int n_pontos, Ponto pontos[n_pontos]) {
 		fprintf(stderr, "Falha ao criar tree.txt.\n");
 		return;
 	}
-    int n = 0;
+    int n = 1;
     while (n < n_pontos)
 	{
         fprintf(fp, "%d %d\n", pontos[n].pai, pontos[n].id);
         n++;
 	}
+    fclose(fp);
 }
 
 void gravaCiclo(int n_pontos, Ponto vertices[n_pontos]) {
@@ -261,11 +262,11 @@ int main(int argc, char *argv[]) {
         printf("dist: %.2f\n", grafo[i][j].distancia);
     }*/
 
-    for(int i = 0; i < n_pontos; i ++) {
-        printf("*x: %.0f y: %.0f\n", pontos[i].x, pontos[i].y);
-        printf("id: %d\n", pontos[i].id);
-        printf("pai: %d\n", pontos[i].pai);
-    }
+    // for(int i = 0; i < n_pontos; i ++) {
+    //     printf("*x: %.0f y: %.0f\n", pontos[i].x, pontos[i].y);
+    //     printf("id: %d\n", pontos[i].id);
+    //     printf("pai: %d\n", pontos[i].pai);
+    // }
 
 //    for(int i = 0; i < n_pontos; i ++)
 //     for(int j = 0; j < n_pontos; j ++) {
