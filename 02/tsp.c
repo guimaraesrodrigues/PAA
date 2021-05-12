@@ -134,6 +134,14 @@ int minKey(float key[], int mstSet[], int n_vertices)
     return min_index; 
 } 
 
+// A utility function to print the 
+// constructed MST stored in parent[] 
+void printMST(int parent[], int n_vertices, Aresta graph[n_vertices][n_vertices]) 
+{ 
+    for (int i = 1; i < n_vertices; i++) 
+        printf("%d - %d\t%f\n", parent[i], i, graph[i][parent[i]].distancia); 
+} 
+
 // Function to construct and print MST for 
 // a graph represented using adjacency 
 // matrix representation 
@@ -176,12 +184,12 @@ void primMST(int n_vertices, Aresta grafo[n_vertices][n_vertices])
             // graph[u][v] is non zero only for adjacent vertices of m 
             // mstSet[v] is false for vertices not yet included in MST 
             // Update the key only if graph[u][v] is smaller than key[v] 
-            if (ehLaco(grafo[u][v]) && mstSet[v] == 0 && grafo[u][v].distancia < key[v]) 
+            if (!ehLaco(grafo[u][v]) && mstSet[v] == 0 && grafo[u][v].distancia < key[v]) 
                 parent[v] = u, key[v] = grafo[u][v].distancia; 
     } 
   
     // print the constructed MST 
-    // printMST(parent, graph); 
+    printMST(parent, n_vertices, grafo); 
 } 
 
 int main(int argc, char *argv[]) {
@@ -211,13 +219,12 @@ int main(int argc, char *argv[]) {
 
     preencheGrafo(n_pontos, grafo);//inicializa as arestas que nao foram contempladas em criaGrafo
 
-   for(int i = 0; i < n_pontos; i ++)
-    for(int j = 0; j < n_pontos; j ++) {
-        printf("%d %d\n", i, j);
-        printf("(%.0f ,%.0f)->(%.0f, %.0f)\n", grafo[i][j].inicio.x, grafo[i][j].inicio.y, grafo[i][j].fim.x, grafo[i][j].fim.y);
-        printf("--------------\n");
-        // printf("dist: %.2f\n", grafo[i][j].distancia);
-    }
+    primMST(n_pontos, grafo);
+
+//    for(int i = 0; i < n_pontos; i ++)
+//     for(int j = 0; j < n_pontos; j ++) {
+//         printf("dist: %.2f\n", grafo[i][j].distancia);
+//     }
 
     fclose (file);
 }
