@@ -5,9 +5,22 @@
 
 // Struct para representar o ponto
 typedef struct Ponto {
-	unsigned int x, y;
-    float distancia;
+  int id;
+  unsigned int x, y;
 } Ponto;
+
+typedef struct Aresta {
+  Ponto inicio;
+  Ponto fim;
+  float distancia; 
+} Aresta;
+
+
+typedef struct Grafo {
+   int vertices; 
+   int arestas; 
+   Aresta **aresta; 
+} Grafo;
 
 // Calcula a distância euclidiana entre p1 e p2
 float dist(Ponto p1, Ponto p2) {
@@ -33,11 +46,9 @@ void criaGrafo(FILE *file, int n_pontos, Ponto grafo[n_pontos][n_pontos]) {
         //Inicializa coluna 0 e linhas y = i
 		grafo[i][0].x = p.x;
         grafo[i][0].y = p.y;
-        grafo[i][0].distancia = -1;
         //Inicializa linha 0 e colunas y = i
         grafo[0][i].x = p.x;
         grafo[0][i].y = p.y;
-        grafo[0][i].distancia = -1;
 
 		i++;
 	}
