@@ -12,6 +12,7 @@
 #include <math.h>
 #include <time.h>
 #include <float.h>
+#define BUFLEN 512
 
 // Struct para representar o ponto
 // Ponto = vértice
@@ -28,6 +29,8 @@ typedef struct Aresta {
   Ponto fim;
   float distancia;
 } Aresta;
+
+int id_verificados[BUFLEN];
 
 // Calcula a distância euclidiana entre p1 e p2
 float dist(Ponto p1, Ponto p2) {
@@ -115,23 +118,46 @@ void preencheGrafo(int n_pontos, Aresta grafo[n_pontos][n_pontos]) {
 
 }
 
+int verticeFoiVerificado(int id_vertice, int n_vertices_verificadas) {
+    for (int i = 0; i < n_vertices_verificadas; i++ ) {
+        if (id_verificados[i] == id_vertice) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
     // algoritmo guloso = escolhe algum pra começar e nao testa outros
     // chave e pai de cada vértice foram inicializados na função criaGrafo!
+    int verificados = 0;
+
+    vertices[0].pai = -1;
+    vertices[0].key = 0;
+    Ponto raiz = vertices[0];
 
     //começa do primeiro ponto.
     for (int i = 0; i < n_pontos; i++) {
+
+        // vamos chamar a atual vértice que estamos olhando de pai. pois ela pode ser pai de alguém.
         Ponto pai = vertices[i];
         //apenas para adicionar um alias e melhorar visualização da lógica
+        int vertice_atual_index = i;
 
-        int pai_index = i;
-
-        /* Para cada adjacencia, deve ser testada se a distancia entre i (pai)
+        id_verificados[verificados] = vertice_atual_index;
+        verificados++;
+        /* Para cada adjacencia, deve ser testada a distancia entre i (pai)
         e as subsequentes colunas. se for menor, atribui o valor no vértice (ponto) e
         atualiza o pai como sendo o ponto iterado pela variável i */
         for (int j = 0; j < n_pontos; j++) {
+            // faz duas verificações:
             // a aresta é de fato ligada ao vértice que estou olhando?
-            if (grafo[i][j].inicio.x == pai.x && grafo[i][j].inicio.y == pai.y ) {
+            // o vertice que estou olhando agora é a raiz?
+
+            if (vertice_atual_index == raiz.id) {
+                break;
+            } else if (grafo[i][j].inicio.x == pai.x && grafo[i][j].inicio.y == pai.y && ! (verticeFoiVerificado(vertices[j].id, verificados))) {
                 if (i != j && grafo[i][j].distancia < vertices[j].key) {
                     printf("%.0f\n",grafo[i][j].distancia );
                     vertices[j].key = grafo[i][j].distancia;
@@ -140,7 +166,6 @@ void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
                 }
             }
         }
-
     }
 }
 
