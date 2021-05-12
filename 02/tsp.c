@@ -20,6 +20,8 @@ typedef struct Ponto {
   float x, y;
   float key; // Para o algoritmo de PRIM
   int pai;  //para o algoritmo de PRIM - ID DO PONTO PAI
+  int busca; //para busca em profundidade
+  Ponto *filhos;
 } Ponto;
 
 // ARESTA: inicio -> fim com peso distancia
@@ -144,8 +146,20 @@ void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
     }
 }
 
-void buscaProf(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]){
-
+void buscaProf(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[], Ponto busca[]){
+    Ponto goal = vertices[0];
+    int v = 0;
+    for(int i=0; i < n_pontos; i++){
+        if(vertices[i].id == goal.id){
+            return vertices[i]; //encontrou o vertice inicial
+        } else {
+            if (vertices[i].busca == -1){
+                //se ainda não foi visitado, coloca na lista e visita filhos
+                busca[v] = vertices[i];
+                buscaProf(n_pontos, grafo, vertices[i].filhos, busca);
+            }
+        }
+    }
 }
 
 int main(int argc, char *argv[]) {
