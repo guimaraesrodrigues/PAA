@@ -101,11 +101,12 @@ void preencheGrafo(int n_pontos, Aresta grafo[n_pontos][n_pontos]) {
     for(int i = 1; i < n_pontos; i++)
         for(int j = 1; j < n_pontos; j++) 
             if( i != j) {
-                grafo[i][j] = inicializaAresta(grafo[i][j-1].fim, grafo[i][j].inicio);
-                grafo[j][i].distancia =  grafo[i][j].distancia;
+                grafo[j][i] = inicializaAresta(grafo[i-1][j].fim, grafo[i][j-1].inicio);
                 
-                grafo[j][i].inicio = grafo[i][j].fim;
-                grafo[j][i].fim = grafo[i][j].inicio;
+                //inicializa grafo[i][j]
+                grafo[i][j].distancia =  grafo[j][i].distancia;
+                grafo[i][j].inicio = grafo[j][i].fim;
+                grafo[i][j].fim = grafo[j][i].inicio;
             } 
 
 }
