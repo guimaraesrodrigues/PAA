@@ -3,7 +3,7 @@
  * 
  * Autores:
  * Ana Yanaze - RA
- * Camila
+ * Camila Puchta - 1043820
  * Rodrigo Guimarães - 1441990
  * 
  * **/
@@ -227,6 +227,10 @@ void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
     }
 }
 
+void buscaProf(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]){
+
+}
+
 int main(int argc, char *argv[]) {
     FILE *file = NULL; //variavel para input.txt
     char first_line[20]; //buffer para leitura da primeira linha do arquivo
@@ -266,9 +270,9 @@ int main(int argc, char *argv[]) {
     }*/
 
     for(int i = 0; i < n_pontos; i ++) {
-        printf("%.0f %.0f\n", pontos[i].x, pontos[i].y);
-        printf("%.2f\n", pontos[i].key);
-        printf("%d\n", pontos[i].pai);
+        printf("*x: %.0f y: %.0f\n", pontos[i].x, pontos[i].y);
+        printf("key: %.2f\n", pontos[i].key);
+        printf("pai: %d\n", pontos[i].pai);
     }
 
 //    for(int i = 0; i < n_pontos; i ++)
