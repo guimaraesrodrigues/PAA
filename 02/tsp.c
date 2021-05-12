@@ -2,7 +2,7 @@
  * Trabalho 02
  * 
  * Autores:
- * Ana Yanaze - RA
+ * Ana Yanaze - 1614673
  * Camila Puchta - 1043820
  * Rodrigo Guimarães - 1441990
  * 
@@ -265,7 +265,7 @@ int main(int argc, char *argv[]) {
     Ponto pontos[n_pontos];
     
     clock_t begin = clock();
-    
+
     criaGrafo(file, n_pontos, grafo, pontos);// Cria grafo com base no arquivo input.txt
     fclose (file);
 
