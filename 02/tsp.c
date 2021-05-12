@@ -14,15 +14,17 @@
 #include <float.h>
 #define BUFLEN 512
 
+typedef struct _Ponto Ponto;
+
 // Struct para representar o ponto
 // Ponto = vértice
-typedef struct Ponto {
+typedef struct _Ponto {
   int id;
   float x, y;
   float key; // Para o algoritmo de PRIM
   int pai;  //para o algoritmo de PRIM - ID DO PONTO PAI
   int busca; //para busca em profundidade
-//   Ponto *filhos;
+  Ponto *filhos;
 } Ponto;
 
 // ARESTA: inicio -> fim com peso distancia
@@ -182,21 +184,22 @@ void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
 /**
  * 
  * **/
-// void buscaProf(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[], Ponto busca[]){
-//     Ponto goal = vertices[0];
-//     int v = 0;
-//     for(int i= 0; i < n_pontos; i++){
-//         if(vertices[i].id == goal.id){
-//             return vertices[i]; //encontrou o vertice inicial
-//         } else {
-//             if (vertices[i].busca == -1){
-//                 //se ainda não foi visitado, coloca na lista e visita filhos
-//                 busca[v] = vertices[i];
-//                 buscaProf(n_pontos, grafo, vertices[i].filhos, busca);
-//             }
-//         }
-//     }
-// };
+Ponto buscaProf(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[], Ponto busca[]){
+    Ponto goal = vertices[0];
+    int v = 0;
+    for(int i= 0; i < n_pontos; i++){
+        if(vertices[i].id == goal.id){
+            return vertices[i]; //encontrou o vertice inicial
+        } else {
+            if (vertices[i].busca == -1){
+                //se ainda não foi visitado, coloca na lista e visita filhos
+                busca[v] = vertices[i];
+                buscaProf(n_pontos, grafo, vertices[i].filhos, busca);
+            }
+        }
+    }
+    return goal;
+};
 
 /**
  * 
@@ -219,7 +222,19 @@ void gravaAGM(int n_pontos, Ponto pontos[n_pontos]) {
 }
 
 void gravaCiclo(int n_pontos, Ponto vertices[n_pontos]) {
-
+    FILE *fp = fopen("cycle.txt", "w");
+	if (fp == NULL)
+	{
+		fprintf(stderr, "Falha ao criar tree.txt.\n");
+		return;
+	}
+    int n = 1;
+    while (n < n_pontos)
+	{
+        fprintf(fp, "%d %d\n", vertices[n].pai, vertices[n].id);
+        n++;
+	}
+    fclose(fp);
 }
 
 
@@ -254,6 +269,11 @@ int main(int argc, char *argv[]) {
     prim(n_pontos, grafo, pontos);
 
     gravaAGM(n_pontos, pontos);
+
+    Ponto busca[n_pontos];
+    buscaProf(n_pontos, grafo, pontos, busca);
+
+    gravaCiclo(n_pontos, busca);
    /*for(int i = 0; i < n_pontos; i ++)
     for(int j = 0; j < n_pontos; j ++) {
         printf("%d %d\n", i, j);
