@@ -12,18 +12,22 @@
 #include <limits.h>
 #include <math.h>
 #include <time.h>
+#include <float.h>
 
 // Struct para representar o ponto
+// Ponto = vértice
 typedef struct Ponto {
-//   int id; NAO TENHO CERTEZA DO USO DISSO
+    int id;
   float x, y;
+  float key; // Para o algoritmo de PRIM
+  int pai;  //para o algoritmo de PRIM - ID DO PONTO PAI
 } Ponto;
 
 // ARESTA: inicio -> fim com peso distancia
 typedef struct Aresta {
   Ponto inicio;
   Ponto fim;
-  float distancia; 
+  float distancia;
 } Aresta;
 
 // NAO TENHO CERTEZA DA NECESSIDADE DESSA STRUCT
@@ -43,7 +47,6 @@ Aresta inicializaAresta(Ponto inicio, Ponto fim) {
     a.inicio = inicio;
     a.fim = fim;
     a.distancia = dist(inicio, fim);
-
     return a;
 }
 
@@ -56,9 +59,7 @@ Aresta inicializaAresta(Ponto inicio, Ponto fim) {
  * D x x D x
  * E x x x E
  **/
-void criaGrafo(FILE *file, int n_pontos, Aresta grafo[n_pontos][n_pontos]) {
-    Ponto p;
-
+void criaGrafo(FILE *file, int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto pontos[]) {
 	int ret = 0;
 	int i = 0;
 	char line_buffer[100]; //buffer a ser utilizado na leitura de cada linha
@@ -66,18 +67,21 @@ void criaGrafo(FILE *file, int n_pontos, Aresta grafo[n_pontos][n_pontos]) {
 	// Percorre a stream, identifica as duas coordenadas na linha
 	// e insere o valor na matriz de ajacências
 	while(fgets(line_buffer, sizeof(line_buffer), file)) {
-		ret = sscanf(line_buffer, "%f %f", &p.x, &p.y);
+		ret = sscanf(line_buffer, "%f %f", &pontos[i].x, &pontos[i].y);
+        pontos[i].pai = -1;
+        pontos[i].key = FLT_MAX;
+        pontos[i].id = i;
         
         if(ret < 1)
 			continue;
 
         //Inicializa linha 0
-        grafo[0][i].inicio.x = p.x;
-        grafo[0][i].inicio.y = p.y;
+        grafo[0][i].inicio.x = pontos[i].x;
+        grafo[0][i].inicio.y = pontos[i].y;
 
         //Inicializa coluna 0 
-		grafo[i][0].inicio.x = p.x;
-        grafo[i][0].inicio.y = p.y;
+		grafo[i][0].inicio.x = pontos[i].x;
+        grafo[i][0].inicio.y = pontos[i].y;
 
         grafo[i][0] = inicializaAresta(grafo[i][0].inicio, grafo[0][0].inicio);
 
@@ -182,7 +186,38 @@ void primMST(int n_vertices, Aresta grafo[n_vertices][n_vertices])
   
     // print the constructed MST 
     // printMST(parent, graph); 
-} 
+}
+
+
+
+void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
+    // algoritmo guloso = escolhe algum pra começar e nao testa outros
+    // chave e pai de cada vértice foram inicializados na função criaGrafo!
+
+    //começa do primeiro ponto.
+    for (int i = 0; i < n_pontos; i++) {
+        Ponto pai = vertices[i];
+        //apenas para adicionar um alias e melhorar visualização da lógica
+
+        int pai_index = i;
+
+        /* Para cada adjacencia, deve ser testada se a distancia entre i (pai)
+        e as subsequentes colunas. se for menor, atribui o valor no vértice (ponto) e
+        atualiza o pai como sendo o ponto iterado pela variável i */
+        for (int j = 0; j < n_pontos; j++) {
+            // a aresta é de fato ligada ao vértice que estou olhando?
+            if (grafo[i][j].inicio.x == pai.x && grafo[i][j].inicio.y == pai.y ) {
+                if (i != j && grafo[i][j].distancia < vertices[j].key) {
+                    printf("%.0f\n",grafo[i][j].distancia );
+                    vertices[j].key = grafo[i][j].distancia;
+                    vertices[j].pai = pai.id;
+                    printf("Id do pai: %d\n", vertices[j].pai);
+                }
+            }
+        }
+
+    }
+}
 
 int main(int argc, char *argv[]) {
     FILE *file = NULL; //variavel para input.txt
@@ -206,17 +241,26 @@ int main(int argc, char *argv[]) {
     sscanf(first_line, "%d", &n_pontos);//converte a primeira linha para int
 
     Aresta grafo[n_pontos][n_pontos];//Matriz de adjacencias
-
-	criaGrafo(file, n_pontos, grafo);// Cria grafo com base no arquivo input.txt
+    Ponto pontos[n_pontos];
+    
+    criaGrafo(file, n_pontos, grafo, pontos);// Cria grafo com base no arquivo input.txt
 
     preencheGrafo(n_pontos, grafo);//inicializa as arestas que nao foram contempladas em criaGrafo
 
-   for(int i = 0; i < n_pontos; i ++)
+    prim(n_pontos, grafo, pontos);
+
+   /*for(int i = 0; i < n_pontos; i ++)
     for(int j = 0; j < n_pontos; j ++) {
         printf("%d %d\n", i, j);
         printf("(%.0f ,%.0f)->(%.0f, %.0f)\n", grafo[i][j].inicio.x, grafo[i][j].inicio.y, grafo[i][j].fim.x, grafo[i][j].fim.y);
         printf("--------------\n");
-        // printf("dist: %.2f\n", grafo[i][j].distancia);
+        printf("dist: %.2f\n", grafo[i][j].distancia);
+    }*/
+
+    for(int i = 0; i < n_pontos; i ++) {
+        printf("%.0f %.0f\n", pontos[i].x, pontos[i].y);
+        printf("%.2f\n", pontos[i].key);
+        printf("%d\n", pontos[i].pai);
     }
 
     fclose (file);
