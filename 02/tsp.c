@@ -120,6 +120,9 @@ void preencheGrafo(int n_pontos, Aresta grafo[n_pontos][n_pontos]) {
 
 int verticeFoiVerificado(int id_vertice, int n_vertices_verificadas) {
     for (int i = 0; i < n_vertices_verificadas; i++ ) {
+        if (id_vertice == 1) {
+            printf("entrou\n");
+        }
         if (id_verificados[i] == id_vertice) {
             return 1;
         }
@@ -145,27 +148,35 @@ void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
         //apenas para adicionar um alias e melhorar visualização da lógica
         int vertice_atual_index = i;
 
-        id_verificados[verificados] = vertice_atual_index;
-        verificados++;
         /* Para cada adjacencia, deve ser testada a distancia entre i (pai)
         e as subsequentes colunas. se for menor, atribui o valor no vértice (ponto) e
         atualiza o pai como sendo o ponto iterado pela variável i */
         for (int j = 0; j < n_pontos; j++) {
-            // faz duas verificações:
-            // a aresta é de fato ligada ao vértice que estou olhando?
-            // o vertice que estou olhando agora é a raiz?
+            // faz algumas verificações:
+            // a aresta é de fato ligada ao vértice que estou olhando? ok se sim
+            // o vertice adjacente que vou comparar esta na lista de verificados? ok se não
+            // verifica também se nao estou comparando o vertice com ele mesmo. 
+            // aplica a verificacao do Prim 
+            // (se o que tenho no momento é maior que o valor oferecido, então substituo e coloco meu pai como o vértice atual)
+            if (grafo[i][j].inicio.x == pai.x && grafo[i][j].inicio.y == pai.y &&
+                ! (verticeFoiVerificado(vertices[j].id, verificados)) &&
+                i != j && 
+                grafo[i][j].distancia < vertices[j].key) {
 
-            if (vertice_atual_index == raiz.id) {
-                break;
-            } else if (grafo[i][j].inicio.x == pai.x && grafo[i][j].inicio.y == pai.y && ! (verticeFoiVerificado(vertices[j].id, verificados))) {
-                if (i != j && grafo[i][j].distancia < vertices[j].key) {
-                    printf("%.0f\n",grafo[i][j].distancia );
-                    vertices[j].key = grafo[i][j].distancia;
-                    vertices[j].pai = pai.id;
-                    printf("Id do pai: %d\n", vertices[j].pai);
-                }
+                vertices[j].key = grafo[i][j].distancia;
+                vertices[j].pai = pai.id;
+                
             }
         }
+        
+        id_verificados[verificados] = vertice_atual_index;
+        verificados++;
+    }
+
+    for(int i = 0; i < n_pontos; i ++) {
+        printf("papap*x: %.0f y: %.0f\n", vertices[i].x, vertices[i].y);
+        printf("key: %.2f\n", vertices[i].key);
+        printf("pai: %d\n", vertices[i].pai);
     }
 }
 
