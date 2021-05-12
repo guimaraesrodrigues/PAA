@@ -9,6 +9,7 @@
  * **/
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <math.h>
 #include <time.h>
 
@@ -104,15 +105,89 @@ void preencheGrafo(int n_pontos, Aresta grafo[n_pontos][n_pontos]) {
                 grafo[j][i] = inicializaAresta(grafo[i-1][j].fim, grafo[i][j-1].inicio);
                 
                 //inicializa grafo[i][j]
-                grafo[i][j].distancia =  grafo[j][i].distancia;
                 grafo[i][j].inicio = grafo[j][i].fim;
                 grafo[i][j].fim = grafo[j][i].inicio;
+                grafo[i][j].distancia =  grafo[j][i].distancia;
             } 
 
 }
 
+int ehLaco(Aresta a) {
+    if((a.inicio.x == a.fim.x) && (a.inicio.y == a.fim.y))
+        return 1;
+    
+    return 0;
+}
+
+// A utility function to find the vertex with 
+// minimum key value, from the set of vertices 
+// not yet included in MST 
+int minKey(float key[], int mstSet[], int n_vertices) 
+{ 
+    // Initialize min value 
+    float min = INT_MAX, min_index; 
+  
+    for (int v = 0; v < n_vertices; v++) 
+        if (mstSet[v] == 0 && key[v] < min) 
+            min = key[v], min_index = v; 
+  
+    return min_index; 
+} 
+
+// Function to construct and print MST for 
+// a graph represented using adjacency 
+// matrix representation 
+void primMST(int n_vertices, Aresta grafo[n_vertices][n_vertices]) 
+{ 
+    // Array to store constructed MST 
+    int parent[n_vertices]; 
+      
+    // Key values used to pick minimum weight edge in cut 
+    float key[n_vertices]; 
+      
+    // To represent set of vertices included in MST 
+    int mstSet[n_vertices]; 
+  
+    // Initialize all keys as INFINITE 
+    for (int i = 0; i < n_vertices; i++) 
+        key[i] = INT_MAX, mstSet[i] = 0; 
+  
+    // Always include first 1st vertex in MST. 
+    // Make key 0 so that this vertex is picked as first vertex. 
+    key[0] = 0; 
+    parent[0] = -1; // First node is always root of MST 
+  
+    // The MST will have V vertices 
+    for (int count = 0; count < n_vertices - 1; count++)
+    { 
+        // Pick the minimum key vertex from the 
+        // set of vertices not yet included in MST 
+        int u = minKey(key, mstSet, n_vertices); 
+  
+        // Add the picked vertex to the MST Set 
+        mstSet[u] = 1; 
+  
+        // Update key value and parent index of 
+        // the adjacent vertices of the picked vertex. 
+        // Consider only those vertices which are not 
+        // yet included in MST 
+        for (int v = 0; v < n_vertices; v++) 
+  
+            // graph[u][v] is non zero only for adjacent vertices of m 
+            // mstSet[v] is false for vertices not yet included in MST 
+            // Update the key only if graph[u][v] is smaller than key[v] 
+            if (ehLaco(grafo[u][v]) && mstSet[v] == 0 && grafo[u][v].distancia < key[v]) 
+                parent[v] = u, key[v] = grafo[u][v].distancia; 
+    } 
+  
+    // print the constructed MST 
+    // printMST(parent, graph); 
+} 
+
 int main(int argc, char *argv[]) {
-    FILE *file = NULL;
+    FILE *file = NULL; //variavel para input.txt
+    char first_line[20]; //buffer para leitura da primeira linha do arquivo
+    int n_pontos; //quantidade de coordendas (x,y) no arquivo
 
     /* Checa argumentos da linha de comando */
     if (argc != 2) {
@@ -126,17 +201,15 @@ int main(int argc, char *argv[]) {
         perror ("Erro ao abrir o arquivo!\n");
         return 1;
     }
-	
-    char first_line[20];
-    int n_pontos;
-    fscanf(file, "%s", first_line); // Le a primeira linha do arquivo para saber quantos pares foram gerados
-    sscanf(first_line, "%d", &n_pontos);//converte string para int
 
-    Aresta grafo[n_pontos][n_pontos];
+    fscanf(file, "%s", first_line); // Le a primeira linha do arquivo para saber quantas coordenadas foram geradas
+    sscanf(first_line, "%d", &n_pontos);//converte a primeira linha para int
+
+    Aresta grafo[n_pontos][n_pontos];//Matriz de adjacencias
 
 	criaGrafo(file, n_pontos, grafo);// Cria grafo com base no arquivo input.txt
 
-    preencheGrafo(n_pontos, grafo);
+    preencheGrafo(n_pontos, grafo);//inicializa as arestas que nao foram contempladas em criaGrafo
 
    for(int i = 0; i < n_pontos; i ++)
     for(int j = 0; j < n_pontos; j ++) {
