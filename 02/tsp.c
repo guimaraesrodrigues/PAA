@@ -25,6 +25,7 @@ typedef struct _Ponto {
   int pai;  //para o algoritmo de PRIM - ID DO PONTO PAI
   int busca; //para busca em profundidade
   Ponto *filhos;
+  float custo_ciclo;
 } Ponto;
 
 // ARESTA: inicio -> fim com peso distancia
@@ -132,6 +133,9 @@ int verticeFoiVerificado(int id_vertice, int n_vertices_verificadas) {
     return 0;
 }
 
+// Em tese, o algoritmo de Prim teria complexidade O(E log V), sendo E as vertices e E as arestas.
+// Contudo, como não utilizamos um heap minimo pela dificuldade com a manipulacao de estrutura de dados
+// na linguagem C, a complexidade aqui ficou quadrática.
 void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
     // algoritmo guloso = escolhe algum pra começar e nao testa outros
     // chave e pai de cada vértice foram inicializados na função criaGrafo!
@@ -173,12 +177,6 @@ void prim(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]) {
         id_verificados[verificados] = vertice_atual_index;
         verificados++;
     }
-
-    for(int i = 0; i < n_pontos; i ++) {
-        printf("papap*x: %.0f y: %.0f\n", vertices[i].x, vertices[i].y);
-        printf("key: %.2f\n", vertices[i].key);
-        printf("pai: %d\n", vertices[i].pai);
-    }
 }
 
 /**
@@ -202,7 +200,7 @@ Ponto buscaProf(int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto vertices[]
 };
 
 /**
- * 
+ * Grava AGM no arquivo tree.txt
  * 
  * */
 void gravaAGM(int n_pontos, Ponto pontos[n_pontos]) {
@@ -221,6 +219,10 @@ void gravaAGM(int n_pontos, Ponto pontos[n_pontos]) {
     fclose(fp);
 }
 
+/**
+ * Grava ciclo no arquivo cycle.txt
+ * 
+ * */
 void gravaCiclo(int n_pontos, Ponto vertices[n_pontos]) {
     FILE *fp = fopen("cycle.txt", "w");
 	if (fp == NULL)
@@ -228,7 +230,7 @@ void gravaCiclo(int n_pontos, Ponto vertices[n_pontos]) {
 		fprintf(stderr, "Falha ao criar tree.txt.\n");
 		return;
 	}
-    int n = 1;
+    int n = 0;
     while (n < n_pontos)
 	{
         fprintf(fp, "%d %d\n", vertices[n].pai, vertices[n].id);
@@ -262,7 +264,10 @@ int main(int argc, char *argv[]) {
     Aresta grafo[n_pontos][n_pontos];//Matriz de adjacencias
     Ponto pontos[n_pontos];
     
+    clock_t begin = clock();
+    
     criaGrafo(file, n_pontos, grafo, pontos);// Cria grafo com base no arquivo input.txt
+    fclose (file);
 
     preencheGrafo(n_pontos, grafo);//inicializa as arestas que nao foram contempladas em criaGrafo
 
@@ -271,27 +276,15 @@ int main(int argc, char *argv[]) {
     gravaAGM(n_pontos, pontos);
 
     Ponto busca[n_pontos];
-    buscaProf(n_pontos, grafo, pontos, busca);
+
+    float custo_ciclo = buscaProf(n_pontos, grafo, pontos, busca).custo_ciclo;
 
     gravaCiclo(n_pontos, busca);
-   /*for(int i = 0; i < n_pontos; i ++)
-    for(int j = 0; j < n_pontos; j ++) {
-        printf("%d %d\n", i, j);
-        printf("(%.0f ,%.0f)->(%.0f, %.0f)\n", grafo[i][j].inicio.x, grafo[i][j].inicio.y, grafo[i][j].fim.x, grafo[i][j].fim.y);
-        printf("--------------\n");
-        printf("dist: %.2f\n", grafo[i][j].distancia);
-    }*/
 
-    // for(int i = 0; i < n_pontos; i ++) {
-    //     printf("*x: %.0f y: %.0f\n", pontos[i].x, pontos[i].y);
-    //     printf("id: %d\n", pontos[i].id);
-    //     printf("pai: %d\n", pontos[i].pai);
-    // }
+    clock_t end = clock();
 
-//    for(int i = 0; i < n_pontos; i ++)
-//     for(int j = 0; j < n_pontos; j ++) {
-//         printf("dist: %.2f\n", grafo[i][j].distancia);
-//     }
+    //tempo algoritmo
+	double tempo = (double)(end - begin) / CLOCKS_PER_SEC;
 
-    fclose (file);
+    printf("%lf %f", tempo, custo_ciclo);
 }
