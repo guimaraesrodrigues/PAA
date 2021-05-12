@@ -31,18 +31,16 @@ typedef struct Aresta {
   float distancia;
 } Aresta;
 
-// NAO TENHO CERTEZA DA NECESSIDADE DESSA STRUCT
-typedef struct Grafo {
-   int n_vertices; 
-//    int n_arestas;  NAO TENHO CERTEZA DO USO DISSO
-   Aresta **aresta; 
-} Grafo;
-
 // Calcula a distância euclidiana entre p1 e p2
 float dist(Ponto p1, Ponto p2) {
 	return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
+/**
+ * Retorna aresta com inicio -> fim e peso representado
+ * pela distancia euclidiana entre os pontos inicio e fim
+ * 
+ * */
 Aresta inicializaAresta(Ponto inicio, Ponto fim) {
     Aresta a;
     a.inicio = inicio;
@@ -100,12 +98,14 @@ void criaGrafo(FILE *file, int n_pontos, Aresta grafo[n_pontos][n_pontos], Ponto
 }
 
 /**
- * 
+ * Inicia com i e j = 1 pois a pimeira linha e coluna ja
+ * foram inicializadas.
  * 
  **/
 void preencheGrafo(int n_pontos, Aresta grafo[n_pontos][n_pontos]) {
     for(int i = 1; i < n_pontos; i++)
         for(int j = 1; j < n_pontos; j++) 
+            //grafo[i][j], onde i == j, ja foi inicializada na funcao criaGrafo
             if( i != j) {
                 grafo[j][i] = inicializaAresta(grafo[i-1][j].fim, grafo[i][j-1].inicio);
                 
