@@ -4,6 +4,10 @@
 #include<string.h>
 #include<time.h>
 
+#define MAX_XAXIS 1024
+#define MAX_YAXIS 1024
+#define MAX_POINTS MAX_XAXIS*MAX_YAXIS
+
 /* Funcao para verificar se argumento eh inteiro positivo. */
 int ehInteiroPositivo(char number[])
 {
@@ -33,6 +37,17 @@ int main(int argc, char *argv[]){
 	/* Recupera tamanho. */
 	int npontos = atoi(argv[1]);
 	
+	/* Verifica se esta dentro dos limites dos eixos. */
+	if (npontos > MAX_POINTS)
+	{
+		fprintf(stderr, "nro de pontos deve ser menor do que %d.\n", MAX_POINTS);
+		return 1;
+	}
+
+	/* Cria matrix para verificar pontos sorteados. */
+	char pontos[MAX_YAXIS][MAX_XAXIS];
+	memset(pontos, 0, MAX_POINTS*sizeof(char));
+
 	/* Salva arquivo de entrada. */
 	FILE *fp = fopen("input.txt", "w");
 	if (fp == NULL)
@@ -42,15 +57,22 @@ int main(int argc, char *argv[]){
 	}
 
 	/* Cria os pontos aleatorios. */
-	fprintf(fp, "%d\n", npontos);
+	int xcontrole = MAX_XAXIS;
+	int ycontrole = MAX_YAXIS; 
 	srand(time(NULL));
-	int n = 0;
-	while (n < npontos)
+	int n = 1;
+	fprintf(fp, "%d\n", npontos);
+	while (n <= npontos)
 	{
-		double x = 10000*(double)rand()/RAND_MAX;
-		double y = 10000*(double)rand()/RAND_MAX;
-		n++;
-		fprintf(fp, "%lf %lf\n", x, y);
+		int x = (int)(rand()%MAX_XAXIS);
+		int y = (int)(rand()%MAX_YAXIS);
+		
+		if (!pontos[x][y])
+		{
+			n++;
+			pontos[x][y] = 1;
+			fprintf(fp, "%d %d\n", x, y);
+		}
 	}
 
 	fclose(fp);
