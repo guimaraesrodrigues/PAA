@@ -11,18 +11,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
-
-// Struct para representar o ponto
-typedef struct Ponto {
-	float x, y;
-} Ponto;
-
-typedef struct Lista {
-    Ponto coord;
-    int key;
-    struct Lista *next;
-    struct Lista *prev;
- } Lista;
+#include "structs.h"
+#include "lista.h"
 
 float calcArea(Ponto p1, Ponto p2, Ponto p3) {
     return ((p2.x - p1.x) * (p3.y - p1.y)) - 
@@ -59,11 +49,33 @@ void createPointsList(FILE *file, Ponto* pontos) {
 }
 
 void recursiveHull(Ponto* pontos, Ponto* hull, int n_pontos) {
-    
-    // size_t n_pontos = sizeof(pontos) / sizeof(pontos[0]);
-
     if(n_pontos <= 2)
         return;
+
+    // Pega posição de cada ponto em relação a reta 'hull'
+    for(int i = 0; i < n_pontos; i++) {
+        // Pontos coincidentes
+        if(calcArea(hull[0], hull[1], pontos[i]) == 0);
+
+        // Pontos a esquerda
+        if(calcArea(hull[0], hull[1], pontos[i]) > 0);
+
+        // Pontos a direita
+        if(calcArea(hull[0], hull[1], pontos[i]) < 0);
+    }
+
+    // Calcula distância ponto-reta
+    for(int i = 0; i < n_pontos; i++) {
+        int maior_esquerda = 0;
+        int maior_direita = 0;
+
+        // Maior distância à esquerda
+        if(calcDist(hull[0], hull[1],))
+
+        // Maior distância à direita
+    }
+
+    // Chamada recursiva com a reta hull[0], ponto aux
 
 }
 
