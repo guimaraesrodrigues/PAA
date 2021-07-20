@@ -17,6 +17,18 @@ typedef struct Ponto {
 	float x, y;
 } Ponto;
 
+typedef struct Lista {
+    Ponto coord;
+    int key;
+    struct Lista *next;
+    struct Lista *prev;
+ } Lista;
+
+float calcArea(Ponto p1, Ponto p2, Ponto p3) {
+    return ((p2.x - p1.x) * (p3.y - p1.y)) - 
+           ((p2.y - p1.y) * (p3.x - p1.x));
+}
+
 float calcDist(Ponto p1, Ponto p2, Ponto p3) {
     float numerador = (
             (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x) *
@@ -46,6 +58,15 @@ void createPointsList(FILE *file, Ponto* pontos) {
 	}
 }
 
+void recursiveHull(Ponto* pontos, Ponto* hull, int n_pontos) {
+    
+    // size_t n_pontos = sizeof(pontos) / sizeof(pontos[0]);
+
+    if(n_pontos <= 2)
+        return;
+
+}
+
 void quickHull(Ponto* pontos, int n_pontos) {
     Ponto menor_coord = pontos[0];
     Ponto maior_coord = pontos[0];
@@ -62,6 +83,13 @@ void quickHull(Ponto* pontos, int n_pontos) {
             maior_coord = pontos[i];
     }
 
+    Ponto hull[n_pontos];
+
+    hull[0] = menor_coord;
+    hull[1] = maior_coord;
+    
+    recursiveHull(pontos, hull, n_pontos);
+    
     printf("Menor x: (%f, %f)\n", menor_coord.x, menor_coord.y);
     printf("Maior x: (%f, %f)\n", maior_coord.x, maior_coord.y);
 
