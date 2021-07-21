@@ -29,6 +29,7 @@ int calcArea(Ponto p1, Ponto p2, Ponto p3) {
         return -1;
     return 0;
 }
+
 /* Calcula a distancia entre ponto e reta geometricamente */
 int calcDist(Ponto p1, Ponto p2, Ponto p3) {
     int numerador = (
@@ -58,6 +59,21 @@ void createPointsList(FILE *file, Ponto* pontos) {
 		n_lines++;
 	}
 }
+
+/*Entrada: <lista de pontos>*/
+/* Saida  <pontos pertencentes ao fecho convexo> */
+
+// A funcao  recursiveHull se utiliza primeiramente da formula de distancia entre ponto e reta para encontrar o po
+// ponto que se encontra mais distante da reta definida pelos pontos passados como parâmetro da função.
+// Ao encontrar o ponto pode-se fazer uma divisão na qual os pontos se encontram no conjuntos a esquerda ou direita
+// dessa nova reta formada. Com esses novos conjuntos é traçado um triângulo entre a o ponto mais distante 
+// a reta passada  os pontos internos a area desse triângulo são excluidos e os externos são adicionados ao 
+// fecho convexo. Apos terminar a verificação o algoritimo cai no caso base da recursão onde adiciona os pontos 
+// iniciais da reta, denominada pelo enunciado como P e Q, ao fecho convexo e o algoritmo é encerrado.
+
+// podemos delimitar a complexidade desse algoritmo para a formula  3n x Logn +c (onde N e o numero de pontos na lista), logo podemos afirmar que o algoritmo
+// é da ordem de O(nlogn), para afirmar tal complexidade assumimos que o algoritimo dividi igualmente em 2 subproblemas 
+// com o mesmo tamanho (n/2). 
 
 void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, int lado) {
 
@@ -124,8 +140,6 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
     //encontra o fecho convexo a direita da reta pq
     recursiveHull(pontos, hull, pontos[idx], q, n_pontos, -calcArea(pontos[idx], q, p));
 }
-
-
 
 
 void quickHull(Ponto* pontos, int n_pontos, Lista* hull) {
