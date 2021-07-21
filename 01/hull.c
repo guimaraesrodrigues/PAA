@@ -65,20 +65,18 @@ void createPointsList(FILE *file, Ponto* pontos) {
 // A funcao  recursiveHull se utiliza primeiramente da formula de distancia entre ponto e reta para encontrar o po
 // ponto que se encontra mais distante da reta definida pelos pontos passados como parâmetro da função.
 // Ao encontrar o ponto pode-se fazer uma divisão na qual os pontos se encontram no conjuntos a esquerda ou direita
-// dessa nova reta formada. Com esses novos conjuntos é traçado um triângulo entre a o ponto mais distante 
-// a reta passada  os pontos internos a area desse triângulo são excluidos e os externos são adicionados ao 
-// fecho convexo. Apos terminar a verificação o algoritimo cai no caso base da recursão onde adiciona os pontos 
-// iniciais da reta, denominada pelo enunciado como P e Q, ao fecho convexo e o algoritmo é encerrado.
+// dessa nova reta formada. Com esses novos conjuntos é traçado um triângulo unindo o ponto mais distante 
+// a reta passada. Os pontos internos a area desse triângulo são excluidos e os externos são adicionados ao 
+// fecho convexo.
 
-// podemos delimitar a complexidade desse algoritmo para a formula  3n x Logn +c (onde N e o numero de pontos na lista), logo podemos afirmar que o algoritmo
-// é da ordem de O(nlogn), para afirmar tal complexidade assumimos que o algoritimo dividi igualmente em 2 subproblemas 
-// com o mesmo tamanho (n/2). 
+// O custo no pior caso do QuickHull vem justamente da caracteristica do algoritmo onde "descartamos" uma parte da lista entrada a cada chamada recursiva
+// Quando acontecem divisoes onde sempre ha uma particao vazia o resultado no pior caso eh quadratico
 
 void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, int lado) {
 
-    /*Definicao de variaveis locais*/
-    int idx = -1;
-    int max_dist = 0;
+   
+    int idx = -1; //indice para identificar o ponto mais distante da reta
+    int max_dist = 0; //valor da maior distancia encontrada na particao
 
     /* Laco para encontrar o ponto mais distante da reta P-Q */
     for (int i = 0; i < n_pontos; i++)
@@ -91,13 +89,11 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
         }
     } 
 
-    /* Caso base da recursão*/
-    // quando o conjunto de pontos estiver para analise estiver vazio
+    // quando nao existir mais pontos na particao
     // adiciona os pontos p e q da reta separadora ao fecho convexo e encerra a recursao.
     if (idx == -1) {
         inserir_primeiro(hull, p);
         inserir_primeiro(hull, q);
-        imprimir_lista(hull);
         return;
     }
 
@@ -112,8 +108,6 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
 
 /*Entrada: <lista de pontos>*/
 /* Saida  <pontos pertencentes ao fecho convexo> */
-
-
 
 void quickHull(Ponto* pontos, int n_pontos, Lista* hull) {
    
@@ -205,8 +199,5 @@ int main(int argc, char *argv[]) {
     //Imprime o tempo
     printf("%f", qh_time);
 
-    // for (int i = 0; i < n_pontos; i++) {
-    //     printf("%f, %f\n", pontos[i].x, pontos[i].y);
-    // }
     return 0;
 }

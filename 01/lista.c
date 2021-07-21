@@ -96,7 +96,7 @@ void imprimir_lista(Lista* lista) {
     int i = 0;
     No* aux = lista->nos;
     while(aux != NULL) {
-        printf("Indice %d: (%d, %d)", i, aux->p.x, aux->p.y);
+        printf("Indice %d: (%d, %d)\n", i, aux->p.x, aux->p.y);
         i++;
         aux = aux->proximo;
     }
