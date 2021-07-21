@@ -97,6 +97,7 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
     if (idx == -1) {
         inserir_primeiro(hull, p);
         inserir_primeiro(hull, q);
+        imprimir_lista(hull);
         return;
     }
 

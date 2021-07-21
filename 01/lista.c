@@ -26,18 +26,6 @@ static int vazia(Lista* lista) {
     return 0;
 }
 
-// Imprime informações de uma struct No
-static void print_no(No* no) {
-    const int MAX_SIZE = 16;
-    char prox[MAX_SIZE];
-    if(no->proximo == NULL) {
-        snprintf(prox, MAX_SIZE, "NULL");
-    } else {
-        snprintf(prox, MAX_SIZE, "0x%06X", no->proximo);
-    }
-    printf("Nó<0x%06X>(proximo=%s, p=Ponto(%d, %d))\n", no, prox, no->p.x, no->p.y);
-}
-
 Lista* criar_lista() {
     Lista* lista = (Lista*) malloc(sizeof(Lista));
     lista->nos = NULL;
@@ -108,8 +96,7 @@ void imprimir_lista(Lista* lista) {
     int i = 0;
     No* aux = lista->nos;
     while(aux != NULL) {
-        printf("Indice %d: ", i);
-        print_no(aux);
+        printf("Indice %d: (%d, %d)", i, aux->p.x, aux->p.y);
         i++;
         aux = aux->proximo;
     }
