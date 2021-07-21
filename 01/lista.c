@@ -19,9 +19,9 @@ static void remover_no(No* no) {
 }
 
 // Função auxiliar para verificar se a lista está vazia
-static bool vazia(Lista* lista) {
-    if (lista->nos == NULL) return true;
-    return false;
+static int vazia(Lista* lista) {
+    if (lista->nos == NULL) return 1;
+    return 0;
 }
 
 // Imprime informações de uma struct No
