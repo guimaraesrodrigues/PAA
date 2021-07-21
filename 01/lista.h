@@ -18,8 +18,11 @@ typedef struct Ponto Ponto;
 // Função para criar uma struct lista com os valores inicializados
 Lista* criar_lista();
 
-// Função para inserir uma struct Ponto de uma lista
-void inserir(Lista* lista, Ponto p);
+// Função para inserir uma struct Ponto de uma lista, em um índice específico
+void inserir(Lista* lista, Ponto p, int indice);
+
+// Função para inserir uma struct Ponto em uma lista na primeira posição
+void inserir_primeiro(Lista* lista, Ponto p);
 
 // Função para remover uma struct Ponto de uma lista
 Ponto remover(Lista* lista, Ponto* p);

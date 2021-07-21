@@ -10,7 +10,6 @@ typedef struct Ponto {
 typedef struct No {
     Ponto p;
     struct No* proximo;
-    struct No* anterior;
 } No;
 
 // Struct para representar uma lista
