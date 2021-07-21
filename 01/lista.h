@@ -30,4 +30,7 @@ void apagar_lista(Lista* lista);
 // Função para imprimir lista
 void imprimir_lista(Lista* lista);
 
+
+// Função para criar arquivo com pontos do fecho convexo
+void cria_arquivo(Lista* lista);
 #endif // LISTA_H

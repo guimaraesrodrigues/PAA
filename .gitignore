@@ -54,6 +54,7 @@ dkms.conf
 #Others
 .vscode
 *.txt
+*.pdf
 closest
 genpoints
 tsp

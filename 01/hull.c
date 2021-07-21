@@ -102,6 +102,9 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
         // Maior distância à direita
     // }
 
+    printf("P(%d, %d)\n", p.x , p.y);
+    printf("Q(%d, %d)\n", q.x, q.y);
+
     if (idx == -1) {
         inserir(hull, p);
         inserir(hull, q);
@@ -167,11 +170,23 @@ int main(int argc, char *argv[]) {
 
     Lista* hull = criar_lista();
 
+    double qh_time;
+
+    clock_t beginQH = clock();
     quickHull(pontos, n_pontos, hull);
+    clock_t endQH = clock();
+
+    //tempo quickhull
+	qh_time = (double)(beginQH - endQH) / CLOCKS_PER_SEC;
 
     imprimir_lista(hull);
+
+    cria_arquivo(hull);
+
+    printf("%f", qh_time);
 
     // for (int i = 0; i < n_pontos; i++) {
     //     printf("%f, %f\n", pontos[i].x, pontos[i].y);
     // }
+    return 0;
 }
