@@ -76,10 +76,6 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
         }
     } 
 
-    printf("P(%d, %d)\n", p.x , p.y);
-    printf("Q(%d, %d)\n", q.x, q.y);
-
-
     /* Caso base da recursão*/
     // quando o conjunto de pontos estiver para analise estiver vazio
     // adiciona os pontos p e q da reta separadora ao fecho convexo e encerra a recursao.
@@ -88,7 +84,7 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
         inserir(hull, q);
         return;
     }
-    
+
     //encontra o fecho convexo a esquerda da reta pq
     recursiveHull(pontos, hull, pontos[idx], p, n_pontos, -calcArea(pontos[idx], p, q));
     //encontra o fecho convexo a direita da reta pq
@@ -184,13 +180,10 @@ int main(int argc, char *argv[]) {
     //tempo quickhull
 	qh_time = (double)(endQH - beginQH) / CLOCKS_PER_SEC;
 
-    // Imprimi o fecho convexo
-    imprimir_lista(hull);
-
     // Cria o arquivo com o fecho convexo
     cria_arquivo(hull);
 
-    //Imprimi o tempo
+    //Imprime o tempo
     printf("%f", qh_time);
 
     // for (int i = 0; i < n_pontos; i++) {
