@@ -84,8 +84,8 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
     // quando o conjunto de pontos estiver para analise estiver vazio
     // adiciona os pontos p e q da reta separadora ao fecho convexo e encerra a recursao.
     if (idx == -1) {
-        inserir(hull, p);
-        inserir(hull, q);
+        inserir_primeiro(hull, p);
+        inserir_primeiro(hull, q);
         return;
     }
     
