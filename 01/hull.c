@@ -53,20 +53,21 @@ void createPointsList(FILE *file, Ponto* pontos) {
 	}
 }
 
-void recursiveHull(Ponto* pontos, Ponto* hull, int n_pontos) {
+void recursiveHull(Ponto* pontos, Lista* hull, int n_pontos) {
     if(n_pontos <= 2)
         return;
 
     // Pega posição de cada ponto em relação a reta 'hull'
     for(int i = 0; i < n_pontos; i++) {
         // Pontos coincidentes
-        if(calcArea(hull[0], hull[1], pontos[i]) == 0);
+        // if(calcArea(hull[0], hull[1], pontos[i]) == 0)
+
 
         // Pontos a esquerda
-        if(calcArea(hull[0], hull[1], pontos[i]) > 0);
+        // if(calcArea(hull[0], hull[1], pontos[i]) > 0)
 
         // Pontos a direita
-        if(calcArea(hull[0], hull[1], pontos[i]) < 0);
+        // if(calcArea(hull[0], hull[1], pontos[i]) < 0)
     }
 
     // Calcula distância ponto-reta
@@ -75,42 +76,41 @@ void recursiveHull(Ponto* pontos, Ponto* hull, int n_pontos) {
         int maior_direita = 0;
 
         // Maior distância à esquerda
-        if(calcDist(hull[0], hull[1], hull[1]))//todo: fix third argument
-            continue;//todo: remove this
+        // if(calcDist(hull[0], hull[1])
 
         // Maior distância à direita
     }
+
+    //
+    
 
     // Chamada recursiva com a reta hull[0], ponto aux
 
 }
 
-void quickHull(Ponto* pontos, int n_pontos) {
-    Ponto menor_coord = pontos[0];
-    Ponto maior_coord = pontos[0];
+void quickHull(Ponto* pontos, int n_pontos, Lista* hull) {
+    int menor_coord_idx = 0;
+    int maior_coord_idx = 0;
 
     for (int i = 1; i < n_pontos; i++) {
-        if(pontos[i].x < menor_coord.x)
-            menor_coord = pontos[i];
-        else if (pontos[i].x == menor_coord.x && pontos[i].y > menor_coord.y)
-            menor_coord = pontos[i];
+        if(pontos[i].x < pontos[menor_coord_idx].x)
+            menor_coord_idx = i;
+        else if (pontos[i].x == pontos[menor_coord_idx].x && pontos[i].y > pontos[menor_coord_idx].y)//acho que posso remover o if de cima e deixar || ao inves de && aqui
+            menor_coord_idx = i;
 
-        if(pontos[i].x > maior_coord.x)
-            maior_coord = pontos[i];
-        else if (pontos[i].x == maior_coord.x && pontos[i].y < maior_coord.y)
-            maior_coord = pontos[i];
+        if(pontos[i].x > pontos[maior_coord_idx].x)
+            maior_coord_idx = i;
+        else if (pontos[i].x == pontos[maior_coord_idx].x && pontos[i].y < pontos[maior_coord_idx].y)//idem comentario linha 98
+            maior_coord_idx = i;
     }
 
-    Ponto hull[n_pontos];
-
-    hull[0] = menor_coord;
-    hull[1] = maior_coord;
+    inserir(hull, pontos[menor_coord_idx]);
+    inserir(hull, pontos[maior_coord_idx]);
     
+    //encontra o fecho convexo a esquerda da reta pq
     recursiveHull(pontos, hull, n_pontos);
-    
-    printf("Menor x: (%f, %f)\n", menor_coord.x, menor_coord.y);
-    printf("Maior x: (%f, %f)\n", maior_coord.x, maior_coord.y);
-
+    //encontra o fecho convexo a direita da reta pq
+    recursiveHull(pontos, hull, n_pontos);
 }
 
 int main(int argc, char *argv[]) {
@@ -139,7 +139,11 @@ int main(int argc, char *argv[]) {
 	createPointsList(file, pontos);// Cria lista de pares com base no arquivo input.txt
     fclose (file);
 
-    quickHull(pontos, n_pontos);
+    Lista* hull = criar_lista();
+
+    quickHull(pontos, n_pontos, hull);
+
+    imprimir_lista(hull);
 
     // for (int i = 0; i < n_pontos; i++) {
     //     printf("%f, %f\n", pontos[i].x, pontos[i].y);

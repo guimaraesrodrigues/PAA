@@ -9,8 +9,8 @@ typedef struct Ponto {
 // Struct para representar um nó de uma lista
 typedef struct No {
     Ponto p;
-    No* proximo;
-    No* anterior;
+    struct No* proximo;
+    struct No* anterior;
 } No;
 
 // Struct para representar uma lista
