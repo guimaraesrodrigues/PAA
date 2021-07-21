@@ -197,7 +197,7 @@ int main(int argc, char *argv[]) {
     cria_arquivo(hull);
 
     //Imprime o tempo
-    printf("%f", qh_time);
+    printf("%f\n", qh_time);
 
     return 0;
 }
