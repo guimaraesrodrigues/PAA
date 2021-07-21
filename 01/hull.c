@@ -14,6 +14,11 @@
 #include "structs.h"
 #include "lista.h"
 
+/**
+ * Calcula area do triangulo formado por p1, p2, p3 
+ * para definir a posicao de p3 em relacao a reta p1->p2
+ * 
+ **/
 float calcArea(Ponto p1, Ponto p2, Ponto p3) {
     return ((p2.x - p1.x) * (p3.y - p1.y)) - 
            ((p2.y - p1.y) * (p3.x - p1.x));
@@ -70,7 +75,8 @@ void recursiveHull(Ponto* pontos, Ponto* hull, int n_pontos) {
         int maior_direita = 0;
 
         // Maior distância à esquerda
-        if(calcDist(hull[0], hull[1],))
+        if(calcDist(hull[0], hull[1], hull[1]))//todo: fix third argument
+            continue;//todo: remove this
 
         // Maior distância à direita
     }
