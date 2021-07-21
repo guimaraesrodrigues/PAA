@@ -18,6 +18,7 @@ static void remover_no(No* no) {
     free(no->proximo);
 }
 
+// Aloca o primeiro nó da lista
 Lista* criar_lista() {
     Lista* lista = (Lista*) malloc(sizeof(Lista));
     lista->nos = NULL;
@@ -25,6 +26,7 @@ Lista* criar_lista() {
     return lista;
 }
 
+// Insere um ponto na lista
 void inserir(Lista* lista, Ponto ponto) {
     if(lista->nos == NULL) {
         lista->nos = criar_no(NULL, ponto);
@@ -49,6 +51,7 @@ void inserir(Lista* lista, Ponto ponto) {
 //     lista->tamanho--;
 // }
 
+// imprime elementos da lista
 void imprimir_lista(Lista* lista) {
     int i = 0;
     No* aux = lista->nos;
@@ -60,6 +63,7 @@ void imprimir_lista(Lista* lista) {
     }
 }
 
+// cria arquivo com as coordenadas do fecho convexo
 void cria_arquivo(Lista* lista) {
     FILE *fp = NULL;
     fp  = fopen ("fecho.txt", "w");
@@ -79,6 +83,7 @@ void cria_arquivo(Lista* lista) {
     fclose (fp);
 }
 
+// libera memoria 
 void apagar_lista(Lista* lista) {
     free(lista);
 }

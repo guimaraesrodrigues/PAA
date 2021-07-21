@@ -35,6 +35,10 @@
 *.i*86
 *.x86_64
 *.hex
+closest
+genpoints
+tsp
+hull
 
 # Debug files
 *.dSYM/
@@ -55,8 +59,4 @@ dkms.conf
 .vscode
 *.txt
 *.pdf
-closest
-genpoints
-tsp
-hull
 .DS_Store

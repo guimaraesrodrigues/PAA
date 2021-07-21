@@ -76,33 +76,6 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
         }
     } 
 
-
-
-    // Pega posição de cada ponto em relação a reta 'hull'
-    // for(int i = 0; i < n_pontos; i++) {
-        // Pontos coincidentes
-        // if(calcArea(hull[0], hull[1], pontos[i]) == 0)
-
-
-        // Pontos a esquerda
-        // if(calcArea(hull[0], hull[1], pontos[i]) > 0)
-
-        // Pontos a direita
-        // if(calcArea(hull[0], hull[1], pontos[i]) < 0)
-    // }
-
-    // Calcula distância ponto-reta
-    // for(int i = 0; i < n_pontos; i++) {
-    //     int maior_esquerda = 0;
-    //     int maior_direita = 0;
-
-        // Maior distância à esquerda
-        // if(calcDist(hull[0], hull[1])
-
-        // Maior distância à direita
-    // }
-
-
     printf("P(%d, %d)\n", p.x , p.y);
     printf("Q(%d, %d)\n", q.x, q.y);
 
@@ -116,13 +89,12 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
         return;
     }
     
-
-    //caso ainda haja pontos, chama a funcao recursivamente para cada lado.
-
     //encontra o fecho convexo a esquerda da reta pq
     recursiveHull(pontos, hull, pontos[idx], p, n_pontos, -calcArea(pontos[idx], p, q));
     //encontra o fecho convexo a direita da reta pq
     recursiveHull(pontos, hull, pontos[idx], q, n_pontos, -calcArea(pontos[idx], q, p));
+
+    return;
 }
 
 
@@ -210,7 +182,7 @@ int main(int argc, char *argv[]) {
     clock_t endQH = clock();
 
     //tempo quickhull
-	qh_time = (double)(beginQH - endQH) / CLOCKS_PER_SEC;
+	qh_time = (double)(endQH - beginQH) / CLOCKS_PER_SEC;
 
     // Imprimi o fecho convexo
     imprimir_lista(hull);
