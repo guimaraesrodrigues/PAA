@@ -2,7 +2,7 @@
  * Trabalho 01
  * 
  * Autores:
- * Eduardo Junior - 
+ * Eduardo Junior - 1458884
  * Rodrigo Guimarães - 1441990
  * 
  * **/
@@ -29,7 +29,7 @@ int calcArea(Ponto p1, Ponto p2, Ponto p3) {
         return -1;
     return 0;
 }
-
+/* Calcula a distancia entre ponto e reta geometricamente */
 int calcDist(Ponto p1, Ponto p2, Ponto p3) {
     int numerador = (
             (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x) *
@@ -61,11 +61,11 @@ void createPointsList(FILE *file, Ponto* pontos) {
 
 void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, int lado) {
 
+    /*Definicao de variaveis locais*/
     int idx = -1;
     int max_dist = 0;
 
-    // finding the point with maximum distance
-    // from L and also on the specified side of L.
+    /* Laco para encontrar o ponto mais distante da reta P-Q */
     for (int i = 0; i < n_pontos; i++)
     {
         int aux = calcDist(p, q, pontos[i]);
@@ -102,9 +102,14 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
         // Maior distância à direita
     // }
 
+
     printf("P(%d, %d)\n", p.x , p.y);
     printf("Q(%d, %d)\n", q.x, q.y);
 
+
+    /* Caso base da recursão*/
+    // quando o conjunto de pontos estiver para analise estiver vazio
+    // adiciona os pontos p e q da reta separadora ao fecho convexo e encerra a recursao.
     if (idx == -1) {
         inserir(hull, p);
         inserir(hull, q);
@@ -112,7 +117,7 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
     }
     
 
-    // Chamada recursiva com a reta hull[0], ponto aux
+    //caso ainda haja pontos, chama a funcao recursivamente para cada lado.
 
     //encontra o fecho convexo a esquerda da reta pq
     recursiveHull(pontos, hull, pontos[idx], p, n_pontos, -calcArea(pontos[idx], p, q));
@@ -120,10 +125,18 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
     recursiveHull(pontos, hull, pontos[idx], q, n_pontos, -calcArea(pontos[idx], q, p));
 }
 
+
+
+
 void quickHull(Ponto* pontos, int n_pontos, Lista* hull) {
+   
+    /* Variaveis para os pontos da reta P-Q */
     int menor_coord_idx = 0;
     int maior_coord_idx = 0;
 
+    /* Laço para encontrar os pontos que formam a reta p-q */
+    /* Os IF's comparam os pontos com menor e maior valor no atributo x */
+    /* Os elseif's utilizam o criterio para caso haja empate entre pontos */ 
     for (int i = 1; i < n_pontos; i++) {
         if(pontos[i].x < pontos[menor_coord_idx].x)
             menor_coord_idx = i;
@@ -136,6 +149,8 @@ void quickHull(Ponto* pontos, int n_pontos, Lista* hull) {
             maior_coord_idx = i;
     }
     
+
+    /* Chamada da funcao recursiva do HULL*/
     //encontra o fecho convexo a esquerda da reta pq
     recursiveHull(pontos, hull, pontos[menor_coord_idx], pontos[maior_coord_idx], n_pontos, 1);
     //encontra o fecho convexo a direita da reta pq
@@ -143,6 +158,8 @@ void quickHull(Ponto* pontos, int n_pontos, Lista* hull) {
 }
 
 int main(int argc, char *argv[]) {
+
+    /* Definicao de variaveis*/
     FILE *file = NULL;
 
     /* Checa argumentos da linha de comando */
@@ -158,31 +175,50 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 	
+    /* Definicao de variaveis*/
     char first_line[20];
     int n_pontos;
-    fscanf(file, "%s", first_line); // Le a primeira linha do arquivo para saber quantos pares foram gerados
-    sscanf(first_line, "%d", &n_pontos);//converte string para int
 
+    // Le a primeira linha do arquivo para saber quantos pares foram gerados
+    fscanf(file, "%s", first_line); 
+
+    //converte string para int
+    sscanf(first_line, "%d", &n_pontos);
+
+    // Defini um lista de pontos
     Ponto pontos[n_pontos];
 
-	createPointsList(file, pontos);// Cria lista de pares com base no arquivo input.txt
+    // Cria lista de pares com base no arquivo input.txt
+	createPointsList(file, pontos);
+
+    //fim da operação com arquivos
     fclose (file);
 
+    //Cria a lista para a armazenar o fecho convexo
     Lista* hull = criar_lista();
 
+    //Variavel para o calculo de tempo
     double qh_time;
 
+    //Armazena o tempo antes do inicio da execucao do algoritmo
     clock_t beginQH = clock();
+
+    // executa o algoritmo
     quickHull(pontos, n_pontos, hull);
+
+    //Armazena o tempo apos o fim da execucao algoritmo
     clock_t endQH = clock();
 
     //tempo quickhull
 	qh_time = (double)(beginQH - endQH) / CLOCKS_PER_SEC;
 
+    // Imprimi o fecho convexo
     imprimir_lista(hull);
 
+    // Cria o arquivo com o fecho convexo
     cria_arquivo(hull);
 
+    //Imprimi o tempo
     printf("%f", qh_time);
 
     // for (int i = 0; i < n_pontos; i++) {
