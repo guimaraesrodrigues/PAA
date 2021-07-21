@@ -54,7 +54,7 @@ void imprimir_lista(Lista* lista) {
     No* aux = lista->nos;
     while(aux != NULL) {
         Ponto* ponto = &aux->p;
-        printf("Indice %d: Ponto(%f, %f)\n", i, ponto->x, ponto->y);
+        printf("Indice %d: Ponto(%d, %d)\n", i, ponto->x, ponto->y);
         i++;
         aux = aux->proximo;
     }

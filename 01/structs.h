@@ -3,7 +3,7 @@
 
 // Struct para representar o ponto
 typedef struct Ponto {
-	float x, y;
+	int x, y;
 } Ponto;
 
 // Struct para representar um nó de uma lista
