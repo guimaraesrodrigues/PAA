@@ -60,8 +60,7 @@ void createPointsList(FILE *file, Ponto* pontos) {
 	}
 }
 
-/*Entrada: <lista de pontos>*/
-/* Saida  <pontos pertencentes ao fecho convexo> */
+
 
 // A funcao  recursiveHull se utiliza primeiramente da formula de distancia entre ponto e reta para encontrar o po
 // ponto que se encontra mais distante da reta definida pelos pontos passados como parâmetro da função.
@@ -108,6 +107,11 @@ void recursiveHull(Ponto* pontos, Lista* hull, Ponto p, Ponto q, int n_pontos, i
 
     return;
 }
+
+
+/*Entrada: <lista de pontos>*/
+/* Saida  <pontos pertencentes ao fecho convexo> */
+
 
 
 void quickHull(Ponto* pontos, int n_pontos, Lista* hull) {

@@ -1,6 +1,9 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
+// Essas structs são utilizadas para armazenamento das informações obtidas ao decorrer do trabalho.
+
+
 // Struct para representar o ponto
 typedef struct Ponto {
 	int x, y;

@@ -5,6 +5,8 @@
 #include "lista.h"
 #include "structs.h"
 
+
+// A estrutura de lista encadeada é utilizada para armazenar os pontos que são adicionados a fecho.
 // Função auxiliar para criar um nó
 static No* criar_no(No* proximo, Ponto p) {
     No* no = (No*) malloc(sizeof(No));
