@@ -26,6 +26,7 @@ static int vazia(Lista* lista) {
     return 0;
 }
 
+//Cria o cabecalho da lista
 Lista* criar_lista() {
     Lista* lista = (Lista*) malloc(sizeof(Lista));
     lista->nos = NULL;
@@ -33,6 +34,7 @@ Lista* criar_lista() {
     return lista;
 }
 
+//insere um elemento no inicio da fila
 void inserir_primeiro(Lista* lista, Ponto p) {
     if(lista->nos == NULL) {
         lista->nos = criar_no(NULL, p);
@@ -77,20 +79,6 @@ void inserir(Lista* lista, Ponto ponto, int indice) {
     lista->tamanho++;
 }
 
-// Ponto remover(Lista* lista, Ponto* ponto) {
-//     No* aux = lista->nos;
-//     while(aux != NULL) {
-//         Ponto* _ponto = &lista->nos->p;
-//         if(_ponto->x == ponto->x && _ponto->y == ponto->y){
-//             No* removido = lista->nos;
-//             lista->nos = removido->proximo;
-//             return removido->p;
-//         }
-//         aux = aux->proximo;
-//     }
-//     lista->tamanho--;
-// }
-
 // imprime elementos da lista
 void imprimir_lista(Lista* lista) {
     int i = 0;
@@ -126,23 +114,3 @@ void cria_arquivo(Lista* lista) {
 void apagar_lista(Lista* lista) {
     free(lista);
 }
-
-// int main() {
-//     Lista* l = criar_lista();
-//     Ponto p0 = {0.0, 0.0};
-//     Ponto p1 = {0.0, 1.0};
-//     Ponto p2 = {1.0, 0.0};
-//     Ponto p3 = {1.0, 1.0};
-
-//     inserir(l, p0);
-//     inserir(l, p1);
-//     inserir(l, p2);
-//     inserir(l, p3);
-
-//     imprimir_lista(l);
-
-//     Ponto rem = remover(l, &p0);
-//     printf("No removido: Ponto(%f, %f)", rem.x, rem.y);
-
-//     imprimir_lista(l);
-// }
