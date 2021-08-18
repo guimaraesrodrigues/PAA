@@ -90,26 +90,6 @@ void imprimir_lista(Lista* lista) {
     }
 }
 
-// cria arquivo com as coordenadas do fecho convexo
-void cria_arquivo(Lista* lista) {
-    FILE *fp = NULL;
-    fp  = fopen ("fecho.txt", "w");
-    
-    if (fp == NULL)
-	{
-		fprintf(stderr, "Falha ao criar input.txt.\n");
-		return;
-	}
-
-    No* aux = lista->nos;
-    while(aux != NULL) {
-        Ponto* ponto = &aux->p;
-        fprintf(fp, "%d %d\n", ponto->x, ponto->y);
-        aux = aux->proximo;
-    }
-    fclose (fp);
-}
-
 // libera memoria 
 void apagar_lista(Lista* lista) {
     free(lista);

@@ -1,62 +1,31 @@
+/**
+ * Author: https://github.com/AkdenizKutayOcal
+ * Repo: https://github.com/AkdenizKutayOcal/Convex-Hull-Calculation-with-Gift-Wrapping-Algorithm
+ **/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
-
-typedef struct {            //Point struct with x and y coordinates
-    int x,y;
-}Point;
+#include "structs.h"
 
 enum orientation{                           //This was a little bit unnecessary and I could do the same thing with int values while checking Clockwise condition
     counterWise, clockWise,coolinear        //However I wanted to learn how to implement and use typedef in such cases.
 };
 typedef enum orientation orientation;
 
-void printArray(Point points[], int size);          //Explanations are at below.
-Point leftpoint(Point points[], int size);
-orientation isCounter(Point A,Point B,Point C);
-int wrap(Point points[],Point *wrapped,int size,Point left);
-int findIndex(Point points[], int size,Point p);
-void gravaFecho(int n_pontos, Point vertices[n_pontos]);
-void createPointsList(FILE *file, Point* pontos);
+Ponto leftpoint(Ponto points[], int size);
+orientation isCounter(Ponto A,Ponto B,Ponto C);
+int wrap(Ponto points[],Ponto *wrapped,int size,Ponto left);
+int findIndex(Ponto points[], int size,Ponto p);
+void gravaFecho(int n_pontos, Ponto vertices[n_pontos]);
 
+void convexHull(int n_pontos, Ponto pontos[]) {
 
-int main(int argc, char *argv[])
-{
-    FILE * file = NULL;
+    //Left Most point
+    Ponto left;
 
-    /* Checa argumentos da linha de comando */
-    if (argc != 2) {
-        printf ("ERROR: you must specify file name!\n");
-        return 1;
-    }
-
-    file = fopen(argv[1], "r");                  //Opens file to read
-
-    if(!file){
-        printf("Could not read the file %s",argv[1]);   //Checks to read if not error message occurs
-        exit(0);
-    }
-
-    /* Definicao de variaveis*/
-    char first_line[20];
-    int n_pontos;
-
-    // Le a primeira linha do arquivo para saber quantos pares foram gerados
-    fscanf(file, "%s", first_line); 
-
-    //converte string para int
-    sscanf(first_line, "%d", &n_pontos);
-
-    // Defini um lista de pontos
-    Point pontos[n_pontos];
-
-    // Cria lista de pares com base no arquivo input.txt
-	createPointsList(file, pontos);
-
-    Point left;                                                 //Left Most point
-
-    Point *wrapped = (Point*)malloc(n_pontos*sizeof(Point));       //Is used to store Points that will be returned
+    //Used to store the convex hull coordinates that will be returned
+    Ponto *wrapped = (Ponto*)malloc(n_pontos*sizeof(Ponto));
 
     left = leftpoint(pontos, n_pontos);
 
@@ -64,25 +33,15 @@ int main(int argc, char *argv[])
 
     gravaFecho(hull_size, wrapped);
 
-    return 0;
+    //return wrapped;
 }
-////////////////////////////////////////////////
-//This function basically prints the Point array
-////////////////////////////////////////////////
-void printArray(Point points[], int size){
 
-    for(int i=0;i<size;i++){
-
-        printf("%d %d\n",points[i].x,points[i].y);
-
-    }
-}
 /////////////////////////////////////////////////////////////////
 //This function finds the left most point of the given point list
 ////////////////////////////////////////////////////////////////
-Point leftpoint(Point points[],int size){
+Ponto leftpoint(Ponto points[],int size){
 
-    Point left = {points[0].x,points[0].y};
+    Ponto left = {points[0].x,points[0].y};
     int min = points[0].x;                       //It searches for the smallest x value and sets it to min
 
     for(int i=1;i<size;i++){
@@ -90,7 +49,7 @@ Point leftpoint(Point points[],int size){
         if(points[i].x<min){
            min = points[i].x;
            left.x = min;
-           left.y = points[i].y;                    //At the end it returns left Point which has the smallest x value
+           left.y = points[i].y;                    //At the end it returns left Ponto which has the smallest x value
         }
         else{
             continue;
@@ -103,7 +62,7 @@ Point leftpoint(Point points[],int size){
 //isCounter Function returns whether given 3 points
 //are CounterClock wise,Clock wise or coolinear.
 ///////////////////////////////////////////////////////////
-orientation isCounter(Point A,Point B,Point C){
+orientation isCounter(Ponto A,Ponto B,Ponto C){
 
     orientation result;
 
@@ -125,37 +84,42 @@ orientation isCounter(Point A,Point B,Point C){
 //wrap Function finds ConvexHull. Takes points array,
 // wrapped array that will return final points, size,
 //and Left point as parameters.If there are more than 3 points
-//It finds convexHull and returns the Points.
+//It finds convexHull and returns the Pontos.
 /////////////////////////////////////////////////////////////
-int wrap(Point points[],Point *wrapped,int size,Point left){
+int wrap(Ponto points[],Ponto *wrapped,int size,Ponto left){
 
-    if(size>2){
+    if(size > 2){
 
         int index = findIndex(points,size,left);        //Finds the index of Leftmost point
         int p = index, q;                                //p is the first and q is the second point
         int k = 0;                                      //k is the int value which will be increased while we are adding new points
-        do{
+        do {
 
-            wrapped[k] = points[p] ;                    //First it adds left most to the array, that in every loop it assigns new p point
+            //First it adds left most to the array, that in every loop it assigns new p point
+            wrapped[k] = points[p];
             
-            q = (p+1)%size;                             //Assigning q value while it is not more than size
+            //Assigning q value while it is not more than size
+            q = (p+1) % size;
 
-            for(int i=0;i<size-1;i++){
+            for(int i = 0; i < size-1; i++){
 
-                if(isCounter(points[p],points[i],points[q])==counterWise){      //This loop finds a point which is clockwise to all other points
-
-                    q = i;                                                      //And that assigns that point to q
+                //This loop finds a point which is clockwise to all other points
+                if(isCounter(points[p],points[i],points[q]) == counterWise) {
+                    //And that assigns that point to q
+                    q = i;                                                      
                 }
             }
 
            k++;
-           p = q;                                         //At the end of every loop we set p as q so that we can add q to the list and continue finding other points
-        }while(p != index);     
-        return k;                          //This loop continues until it reaches start point
+           //At the end of every loop we set p as q so that we can add q to the list and continue finding other points
+           p = q;
+        } while(p != index);//This loop continues until it reaches start point
+
+        return k; //returns the size of wrapped list
     }
     else{
         printf("There must be at least 3 points");
-        return -1;
+        return 0;
     }
 
 }
@@ -164,7 +128,7 @@ int wrap(Point points[],Point *wrapped,int size,Point left){
 //This function finds the index of given point in given point array
 //Where I used it at wrap function
 ///////////////////////////////////////////////////////////////////
-int findIndex(Point points[], int size,Point p){
+int findIndex(Ponto points[], int size,Ponto p){
 
     int index = 0;
     for(int i=0;i<size;i++){
@@ -185,7 +149,7 @@ int findIndex(Point points[], int size,Point p){
  * Grava ciclo no arquivo cycle.txt
  * 
  * */
-void gravaFecho(int n_pontos, Point vertices[n_pontos]) {
+void gravaFecho(int n_pontos, Ponto vertices[n_pontos]) {
     FILE *fp = fopen("fecho.txt", "w");
 	if (fp == NULL)
 	{
@@ -202,8 +166,8 @@ void gravaFecho(int n_pontos, Point vertices[n_pontos]) {
 }
 
 // Cria uma lista pontos P baseado no arquivo passado como parâmetro
-void createPointsList(FILE *file, Point* pontos) {
-    Point p;
+void createPointsList(FILE *file, Ponto* pontos) {
+    Ponto p;
 
 	int ret = 0;
 	int n_lines = 0;

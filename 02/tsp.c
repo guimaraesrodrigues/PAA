@@ -12,8 +12,8 @@
 #include <math.h>
 #include <time.h>
 #include <float.h>
-#include "../helpers/structs.h"
-#include "../helpers/lista.h"
+#include "utils/structs.h"
+#include "utils/giftwrapping.h"
 
 /**
  * Grava ciclo no arquivo cycle.txt
@@ -46,7 +46,7 @@ void criaGrafo(FILE *file, int n_pontos, Ponto pontos[]) {
 	// Percorre a stream, identifica as duas coordenadas na linha
 	// e insere o valor na matriz de ajacências
 	while(fgets(line_buffer, sizeof(line_buffer), file)) {
-		ret = sscanf(line_buffer, "%f %f", &pontos[i].x, &pontos[i].y);
+		ret = sscanf(line_buffer, "%d %d", &pontos[i].x, &pontos[i].y);
         // pontos[i].pai = -1;
         // pontos[i].key = FLT_MAX;
         // pontos[i].id = i;
@@ -61,6 +61,7 @@ int main(int argc, char *argv[]) {
     FILE *file = NULL; //variavel para input.txt
     char first_line[20]; //buffer para leitura da primeira linha do arquivo
     int n_pontos; //quantidade de coordendas (x,y) no arquivo
+    Ponto pontos[n_pontos]; //Lista para representar os pontos lidos no arquivo input.txt
 
     /* Checa argumentos da linha de comando */
     if (argc != 2) {
@@ -77,12 +78,17 @@ int main(int argc, char *argv[]) {
 
     fscanf(file, "%s", first_line); // Le a primeira linha do arquivo para saber quantas coordenadas foram geradas
     sscanf(first_line, "%d", &n_pontos);//converte a primeira linha para int
-    
-    clock_t begin = clock();
 
-    // criaGrafo(file, n_pontos, grafo, pontos);// Cria grafo com base no arquivo input.txt
+    // Cria lista de pares com base no arquivo input.txt
+	createPointsList(file, pontos);
+
     fclose (file);
 
+    convexHull(n_pontos, pontos);
+
+    // criaGrafo(file, n_pontos, grafo, pontos);// Cria grafo com base no arquivo input.txt
+    
+    clock_t begin = clock();
     // gravaCiclo(n_pontos, busca);
 
     clock_t end = clock();

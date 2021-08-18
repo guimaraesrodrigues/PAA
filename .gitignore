@@ -39,6 +39,7 @@ closest
 genpoints
 tsp
 hull
+giftwrapping
 
 # Debug files
 *.dSYM/
