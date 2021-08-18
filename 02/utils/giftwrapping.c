@@ -19,7 +19,7 @@ int wrap(Ponto points[],Ponto *wrapped,int size,Ponto left);
 int findIndex(Ponto points[], int size,Ponto p);
 void gravaFecho(int n_pontos, Ponto vertices[n_pontos]);
 
-void convexHull(int n_pontos, Ponto pontos[]) {
+int convexHull(int n_pontos, Ponto pontos[]) {
 
     //Left Most point
     Ponto left;
@@ -33,28 +33,28 @@ void convexHull(int n_pontos, Ponto pontos[]) {
 
     gravaFecho(hull_size, wrapped);
 
-    //return wrapped;
+    return hull_size;
 }
 
 /////////////////////////////////////////////////////////////////
 //This function finds the left most point of the given point list
 ////////////////////////////////////////////////////////////////
-Ponto leftpoint(Ponto points[],int size){
+Ponto leftpoint(Ponto points[], int size) {
 
-    Ponto left = {points[0].x,points[0].y};
+    Ponto left = {points[0].x, points[0].y, points[0].visitado};
     int min = points[0].x;                       //It searches for the smallest x value and sets it to min
 
-    for(int i=1;i<size;i++){
+    for(int i = 1;i < size; i++){
 
-        if(points[i].x<min){
+        if(points[i].x < min) {
            min = points[i].x;
            left.x = min;
            left.y = points[i].y;                    //At the end it returns left Ponto which has the smallest x value
-        }
-        else{
+        } else {
             continue;
         }
     }
+    left.visitado = 1;
     return left;
 }
 
@@ -97,6 +97,7 @@ int wrap(Ponto points[],Ponto *wrapped,int size,Ponto left){
 
             //First it adds left most to the array, that in every loop it assigns new p point
             wrapped[k] = points[p];
+            wrapped[k].visitado = 1;
             
             //Assigning q value while it is not more than size
             q = (p+1) % size;

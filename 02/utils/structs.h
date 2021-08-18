@@ -7,6 +7,7 @@
 // Struct para representar o ponto
 typedef struct Ponto {
 	int x, y;
+    int visitado;
 } Ponto;
 
 // Struct para representar um nó de uma lista

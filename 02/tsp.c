@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 
     fclose (file);
 
-    convexHull(n_pontos, pontos);
+    int hull_size = convexHull(n_pontos, pontos);
 
     // criaGrafo(file, n_pontos, grafo, pontos);// Cria grafo com base no arquivo input.txt
     
