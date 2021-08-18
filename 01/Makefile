@@ -1,5 +1,5 @@
 all:
-	gcc hull.c lista.c -o hull -lm
+	gcc ../helpers/hull.c ../helpers/lista.c -o hull -lm
 
 clean:
 	rm -rf hull

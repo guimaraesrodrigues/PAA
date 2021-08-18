@@ -20,9 +20,9 @@
  * 
  **/
 int calcArea(Ponto p1, Ponto p2, Ponto p3) {
-    int area = abs(((p2.x - p1.x) * (p3.y - p1.y)) - 
-           ((p2.y - p1.y) * (p3.x - p1.x)));
-    
+    int area = ((p2.x - p1.x) * (p3.y - p1.y)) - 
+           ((p2.y - p1.y) * (p3.x - p1.x));
+
     if (area > 0)
         return 1;
     if (area < 0)
@@ -33,9 +33,10 @@ int calcArea(Ponto p1, Ponto p2, Ponto p3) {
 /* Calcula a distancia entre ponto e reta geometricamente */
 int calcDist(Ponto p1, Ponto p2, Ponto p3) {
     int numerador = (
-            (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x) *
-            (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)
+            ((p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)) *
+            ((p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x))
         );
+
     int denominador = ((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
     return fabs(sqrt(numerador)/sqrt(denominador));
 }
