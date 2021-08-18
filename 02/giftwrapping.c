@@ -15,7 +15,7 @@ typedef enum orientation orientation;
 void printArray(Point points[], int size);          //Explanations are at below.
 Point leftpoint(Point points[], int size);
 orientation isCounter(Point A,Point B,Point C);
-void wrap(Point points[],Point *wrapped,int size,Point left);
+int wrap(Point points[],Point *wrapped,int size,Point left);
 int findIndex(Point points[], int size,Point p);
 void gravaFecho(int n_pontos, Point vertices[n_pontos]);
 void createPointsList(FILE *file, Point* pontos);
@@ -54,50 +54,15 @@ int main(int argc, char *argv[])
     // Cria lista de pares com base no arquivo input.txt
 	createPointsList(file, pontos);
 
-    // int temparr[100];
-    // int status = 0;
-    // int SIZE = 0;
-    // int elements = 0;
-
-    // while(status!=-1){                                              //While reading the file for the first time I find the number of elements in the file
-
-    //     status = fscanf(file,"%d",&temparr[elements]);              //Since Points just have x and y coordinates, when we divide that value to 2 we will find the number of points
-    //     elements++;
-    // }
-
-    // SIZE = elements/2;
-    // fclose(file);                                                    //Then I reopen the file. This time to read the values and create Points
-
-    // file = fopen(argv[1], "r");
-
     Point left;                                                 //Left Most point
-    // int matrix[SIZE][2];                                     //Double dimensional array where I keep Point coordinates while reading them from the file
-    // Point points[SIZE];                                         //Point array where we store points
+
     Point *wrapped = (Point*)malloc(n_pontos*sizeof(Point));       //Is used to store Points that will be returned
 
-
-    // for(int r=0; r<SIZE;r++){
-
-    //     for(int c=0 ;c<2;c++ ){
-    //         fscanf(file, "%d", &matrix[r][c]);      //Scanning Point coordinates from the file
-    //     }
-    // }
-    // fclose(file);
-
-    // for(int r=0; r<SIZE;r++){                       //The loop that creates Points
-
-    //     Point point ={0,0};
-    //     point.x=matrix[r][0];                       //It sets Point's x and y values from the double dim array
-    //     point.y = matrix[r][1];
-    //     points[r]= point;                           //And adds them to the Point array
-    // }
-
     left = leftpoint(pontos, n_pontos);
-    puts("Convex hull is being computed....");
-    puts("Polygon points are:");
-    wrap(pontos, wrapped, n_pontos, left);
 
-    gravaFecho(n_pontos, wrapped);
+    int hull_size = wrap(pontos, wrapped, n_pontos, left);
+
+    gravaFecho(hull_size, wrapped);
 
     return 0;
 }
@@ -162,17 +127,17 @@ orientation isCounter(Point A,Point B,Point C){
 //and Left point as parameters.If there are more than 3 points
 //It finds convexHull and returns the Points.
 /////////////////////////////////////////////////////////////
-void wrap(Point points[],Point *wrapped,int size,Point left){
+int wrap(Point points[],Point *wrapped,int size,Point left){
 
     if(size>2){
 
         int index = findIndex(points,size,left);        //Finds the index of Leftmost point
-        int p = index,q;                                //p is the first and q is the second point
+        int p = index, q;                                //p is the first and q is the second point
         int k = 0;                                      //k is the int value which will be increased while we are adding new points
         do{
 
             wrapped[k] = points[p] ;                    //First it adds left most to the array, that in every loop it assigns new p point
-
+            
             q = (p+1)%size;                             //Assigning q value while it is not more than size
 
             for(int i=0;i<size-1;i++){
@@ -185,14 +150,12 @@ void wrap(Point points[],Point *wrapped,int size,Point left){
 
            k++;
            p = q;                                         //At the end of every loop we set p as q so that we can add q to the list and continue finding other points
-        }while(p != index);                               //This loop continues until it reaches start point
-
-        // printArray(wrapped,k);                            //At the end, it prints the array
-        // puts("");
+        }while(p != index);     
+        return k;                          //This loop continues until it reaches start point
     }
     else{
         printf("There must be at least 3 points");
-        exit(0);
+        return -1;
     }
 
 }
