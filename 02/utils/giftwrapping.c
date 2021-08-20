@@ -19,19 +19,16 @@ int wrap(Ponto points[],Ponto *wrapped,int size,Ponto left);
 int findIndex(Ponto points[], int size,Ponto p);
 void gravaFecho(int n_pontos, Ponto vertices[n_pontos]);
 
-int convexHull(int n_pontos, Ponto pontos[]) {
+int convexHull(int n_pontos, Ponto pontos[], Ponto *hull) {
 
     //Left Most point
     Ponto left;
 
-    //Used to store the convex hull coordinates that will be returned
-    Ponto *wrapped = (Ponto*)malloc(n_pontos*sizeof(Ponto));
-
     left = leftpoint(pontos, n_pontos);
+    
+    int hull_size = wrap(pontos, hull, n_pontos, left);
 
-    int hull_size = wrap(pontos, wrapped, n_pontos, left);
-
-    gravaFecho(hull_size, wrapped);
+    // gravaFecho(hull_size, hull);
 
     return hull_size;
 }
@@ -44,16 +41,16 @@ Ponto leftpoint(Ponto points[], int size) {
     Ponto left = {points[0].x, points[0].y, points[0].visitado};
     int min = points[0].x;                       //It searches for the smallest x value and sets it to min
 
+
     for(int i = 1;i < size; i++){
 
         if(points[i].x < min) {
            min = points[i].x;
            left.x = min;
            left.y = points[i].y;                    //At the end it returns left Ponto which has the smallest x value
-        } else {
-            continue;
         }
     }
+
     left.visitado = 1;
     return left;
 }
@@ -129,7 +126,7 @@ int wrap(Ponto points[],Ponto *wrapped,int size,Ponto left){
 //This function finds the index of given point in given point array
 //Where I used it at wrap function
 ///////////////////////////////////////////////////////////////////
-int findIndex(Ponto points[], int size,Ponto p){
+int findIndex(Ponto points[], int size, Ponto p){
 
     int index = 0;
     for(int i=0;i<size;i++){

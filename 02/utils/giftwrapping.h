@@ -4,7 +4,7 @@
 // Struct para representar o ponto
 typedef struct Ponto Ponto;
 
-int convexHull(int n_pontos, Ponto pontos[]);
+int convexHull(int n_pontos, Ponto pontos[], Ponto *hull);
 void createPointsList(FILE *file, Ponto* pontos); 
 
 #endif // GIFTWRAPPING_H

@@ -6,12 +6,10 @@
  * 
  * **/
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
-#include <float.h>
 #include "utils/structs.h"
 #include "utils/giftwrapping.h"
 
@@ -38,30 +36,23 @@ void gravaCiclo(int n_pontos, Ponto vertices[n_pontos]) {
     fclose(fp);
 }
 
-void criaGrafo(FILE *file, int n_pontos, Ponto pontos[]) {
-	int ret = 0;
-	int i = 0;
-	char line_buffer[100]; //buffer a ser utilizado na leitura de cada linha
+// void tsp(int hull_size, Ponto *hull, int n_pontos, Ponto pontos[]) {
+//     int dist_i_j = 0;
+//     int dist_i_k = 0;
+//     int dist_j_k = 0;
 
-	// Percorre a stream, identifica as duas coordenadas na linha
-	// e insere o valor na matriz de ajacências
-	while(fgets(line_buffer, sizeof(line_buffer), file)) {
-		ret = sscanf(line_buffer, "%d %d", &pontos[i].x, &pontos[i].y);
-        // pontos[i].pai = -1;
-        // pontos[i].key = FLT_MAX;
-        // pontos[i].id = i;
-        
-        if(ret < 1)
-			continue;
-    }
-}
+//     int tripla = dist_i_k + dist_j_k - dist_i_j;
+
+    //substitui aresta Vi -> Vj por Vi -> Vk e Vk -> Vj
+
+    //hull = hull com Vi -> Vk e Vk -> Vj
+// }
 
 
 int main(int argc, char *argv[]) {
     FILE *file = NULL; //variavel para input.txt
     char first_line[20]; //buffer para leitura da primeira linha do arquivo
     int n_pontos; //quantidade de coordendas (x,y) no arquivo
-    Ponto pontos[n_pontos]; //Lista para representar os pontos lidos no arquivo input.txt
 
     /* Checa argumentos da linha de comando */
     if (argc != 2) {
@@ -79,12 +70,19 @@ int main(int argc, char *argv[]) {
     fscanf(file, "%s", first_line); // Le a primeira linha do arquivo para saber quantas coordenadas foram geradas
     sscanf(first_line, "%d", &n_pontos);//converte a primeira linha para int
 
-    // Cria lista de pares com base no arquivo input.txt
+    Ponto pontos[n_pontos]; //Lista para representar os pontos lidos no arquivo input.txt
+
+    // Cria vetor de pares com base no arquivo input.txt
 	createPointsList(file, pontos);
 
+    //fecha arquivo input.txt
     fclose (file);
 
-    int hull_size = convexHull(n_pontos, pontos);
+    //vetor para armazenar pontos do fecho convexo
+    Ponto *hull = (Ponto*) malloc(n_pontos * sizeof(Ponto));
+    
+    //Define e retorna a quantidade de pontos que compoem o fecho convexo 
+    int hull_size = convexHull(n_pontos, pontos, hull);
 
     // criaGrafo(file, n_pontos, grafo, pontos);// Cria grafo com base no arquivo input.txt
     
