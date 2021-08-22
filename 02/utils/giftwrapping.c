@@ -28,7 +28,11 @@ int convexHull(int n_pontos, Ponto pontos[], Ponto *hull) {
     
     int hull_size = wrap(pontos, hull, n_pontos, left);
 
-    // gravaFecho(hull_size, hull);
+    hull[hull_size] = hull[0];
+    hull_size++;
+    
+    //TODO: REMOVE BEFORE SUBMIT
+    gravaFecho(hull_size, hull);
 
     return hull_size;
 }
