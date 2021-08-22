@@ -28,10 +28,9 @@ int convexHull(int n_pontos, Ponto pontos[], Ponto *hull) {
     
     int hull_size = wrap(pontos, hull, n_pontos, left);
 
-    hull[hull_size] = hull[0];
-    hull_size++;
-    
+    //******************************//
     //TODO: REMOVE BEFORE SUBMIT
+    //******************************//
     gravaFecho(hull_size, hull);
 
     return hull_size;
@@ -42,7 +41,7 @@ int convexHull(int n_pontos, Ponto pontos[], Ponto *hull) {
 ////////////////////////////////////////////////////////////////
 Ponto leftpoint(Ponto points[], int size) {
 
-    Ponto left = {points[0].x, points[0].y, points[0].visitado};
+    Ponto left = {points[0].x, points[0].y};
     int min = points[0].x;                       //It searches for the smallest x value and sets it to min
 
 
@@ -55,7 +54,6 @@ Ponto leftpoint(Ponto points[], int size) {
         }
     }
 
-    left.visitado = 1;
     return left;
 }
 
@@ -87,18 +85,17 @@ orientation isCounter(Ponto A,Ponto B,Ponto C){
 //and Left point as parameters.If there are more than 3 points
 //It finds convexHull and returns the Pontos.
 /////////////////////////////////////////////////////////////
-int wrap(Ponto points[],Ponto *wrapped,int size,Ponto left){
+int wrap(Ponto points[],Ponto *wrapped,int size, Ponto left){
 
     if(size > 2){
 
-        int index = findIndex(points,size,left);        //Finds the index of Leftmost point
+        int index = findIndex(points, size, left);        //Finds the index of Leftmost point
         int p = index, q;                                //p is the first and q is the second point
         int k = 0;                                      //k is the int value which will be increased while we are adding new points
         do {
 
             //First it adds left most to the array, that in every loop it assigns new p point
             wrapped[k] = points[p];
-            wrapped[k].visitado = 1;
             
             //Assigning q value while it is not more than size
             q = (p+1) % size;
