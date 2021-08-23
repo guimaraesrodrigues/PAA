@@ -28,9 +28,6 @@ int convexHull(int n_pontos, Ponto pontos[], Ponto *hull) {
     
     int hull_size = wrap(pontos, hull, n_pontos, left);
 
-    //******************************//
-    //TODO: REMOVE BEFORE SUBMIT
-    //******************************//
     gravaFecho(hull_size, hull);
 
     return hull_size;
@@ -42,7 +39,7 @@ int convexHull(int n_pontos, Ponto pontos[], Ponto *hull) {
 Ponto leftpoint(Ponto points[], int size) {
 
     Ponto left = {points[0].x, points[0].y};
-    int min = points[0].x;                       //It searches for the smallest x value and sets it to min
+    float min = points[0].x;                       //It searches for the smallest x value and sets it to min
 
 
     for(int i = 1;i < size; i++){
@@ -155,11 +152,12 @@ void gravaFecho(int n_pontos, Ponto vertices[n_pontos]) {
 		fprintf(stderr, "Falha ao criar fecho.txt.\n");
 		return;
 	}
-    int n = 0;
-    while (n < n_pontos)
+    int i = n_pontos - 1;
+    
+    while (i >= 0)
 	{
-        fprintf(fp, "%d %d\n", vertices[n].x, vertices[n].y);
-        n++;
+        fprintf(fp, "%f %f\n", vertices[i].x, vertices[i].y);
+        i--;
 	}
     fclose(fp);
 }
@@ -175,7 +173,7 @@ void createPointsList(FILE *file, Ponto* pontos) {
 	// Percorre a stream, identifica as duas coordenadas na linha
 	// e insere o valor no array pontos
 	while(fgets(line_buffer, sizeof(line_buffer), file)) {
-		ret = sscanf(line_buffer, "%d %d", &p.x, &p.y);
+		ret = sscanf(line_buffer, "%f %f", &p.x, &p.y);
 		if(ret < 1)
 			continue;
 		pontos[n_lines].x = p.x;
