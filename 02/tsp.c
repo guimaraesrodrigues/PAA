@@ -67,7 +67,6 @@ int calcDist(Ponto p1, Ponto p2) {
 float tsp(int tam_ciclo, int n_pontos, Ponto *pontos_internos, Ponto *ciclo) {
 
     int n_internos = n_pontos - tam_ciclo;
-
     float custo_ciclo = 0.0;
     
     int Vi, Vj, Vk = 0;
@@ -79,42 +78,41 @@ float tsp(int tam_ciclo, int n_pontos, Ponto *pontos_internos, Ponto *ciclo) {
     float tripla = FLT_MAX;
     int aux = tripla;
 
-    for(int k = 0; k <= n_internos; k++) {
+    while(n_internos > 0) {
 
-        
-        for (int i = 0; i < tam_ciclo; i++) {
+        for(int k = 0; k <= n_internos; k++) {
 
-            int j = i + 1;
+            for (int i = 0; i < tam_ciclo; i++) {
 
-            dist_i_j = calcDist(ciclo[i], pontos_internos[k]);
-            dist_i_k = calcDist(ciclo[i], pontos_internos[k]);
-            dist_j_k = calcDist(ciclo[j], pontos_internos[k]);
-            
-            aux = dist_i_k + dist_j_k - dist_i_j;
+                int j = i + 1;
 
-            if (aux < tripla) {
-                tripla = aux;
+                dist_i_j = calcDist(ciclo[i], pontos_internos[j]);
+                dist_i_k = calcDist(ciclo[i], pontos_internos[k]);
+                dist_j_k = calcDist(ciclo[j], pontos_internos[k]);
+                
+                aux = dist_i_k + dist_j_k - dist_i_j;
 
-                Vi = i;
-                Vj = j;
-                Vk = k;
+                if (aux < tripla) {
+                    tripla = aux;
+                    Vi = i;
+                    Vj = j;
+                    Vk = k;
+                    // printf("ponto k %f, %f\n", pontos_internos[k].x, pontos_internos[k].y);
+                    // printf("aresta(i,j) = (%f, %f) (%f, %f)\n\n", ciclo[i].x, ciclo[i].y,  ciclo[j].x, ciclo[j].y);
 
-                // printf("ponto k %f, %f\n", pontos_internos[k].x, pontos_internos[k].y);
-                // printf("aresta(i,j) = (%f, %f) (%f, %f)\n\n", ciclo[i].x, ciclo[i].y,  ciclo[j].x, ciclo[j].y);
-
+                }
             }
+
+            ciclo[Vj + 1] = ciclo[Vj];
+            ciclo[Vi + 1] = pontos_internos[Vk];
+
+            custo_ciclo += tripla;
+
+            tripla = FLT_MAX;
+            tam_ciclo++;
         }
-
-        ciclo[Vj + 1] = ciclo[Vj];
-        ciclo[Vi + 1] = pontos_internos[Vk];
-        custo_ciclo += tripla;
-
-        tripla = FLT_MAX;
-        tam_ciclo++;
+        n_internos--;
     }
-
-    // printf("foda %d\n", tam_ciclo);
-
     return custo_ciclo;
 }
 

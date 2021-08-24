@@ -106,6 +106,8 @@ int wrap(Ponto points[],Ponto *wrapped,int size, Ponto left){
                 }
             }
 
+            printf("vsf %f, %f \n", wrapped[k].x, wrapped[k].y);
+
            k++;
            //At the end of every loop we set p as q so that we can add q to the list and continue finding other points
            p = q;
