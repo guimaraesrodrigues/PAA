@@ -12,10 +12,13 @@
 #include <time.h>
 #include <float.h>
 #include <string.h>
+#include <vector>
 #include "utils/structs.h"
 #include "utils/giftwrapping.h"
 
-Ponto* removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_fecho, Ponto* pontos_internos) {
+using namespace std;
+
+vector<Ponto> removePontos(int n_pontos, vector<Ponto> pontos, Ponto* fecho, int tam_fecho, vector<Ponto> pontos_internos) {
   
     int n_fecho = tam_fecho -1;
     int k = 0;
@@ -26,6 +29,7 @@ Ponto* removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_fecho, P
                 break;
             else if (j == n_fecho - 1) {
                 pontos_internos[k] = pontos[i];
+                pontos_internos[k].visitado = 0;
                 k++;
             }
         }
@@ -37,7 +41,7 @@ Ponto* removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_fecho, P
  * Grava ciclo no arquivo ciclo.txt
  * 
  * */
-void gravaCiclo(int n_ciclo, Ponto *ciclo) {
+void gravaCiclo(int n_ciclo, vector<Ponto> ciclo) {
    
     FILE *fp = fopen("ciclo.txt", "w");
 	
@@ -63,7 +67,7 @@ int calcDist(Ponto p1, Ponto p2) {
     return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
-float tsp(int tam_ciclo, int n_pontos, Ponto *pontos_internos, Ponto *ciclo) {
+float tsp(int tam_ciclo, int n_pontos, vector<Ponto> pontos_internos, vector<Ponto> ciclo) {
 
     int n_internos = n_pontos - tam_ciclo;
     float custo_ciclo = 0.0;
@@ -98,6 +102,7 @@ float tsp(int tam_ciclo, int n_pontos, Ponto *pontos_internos, Ponto *ciclo) {
                     Vk = k;
                     // printf("ponto k %f, %f\n", pontos_internos[k].x, pontos_internos[k].y);
                     // printf("aresta(i,j) = (%f, %f) (%f, %f)\n\n", ciclo[i].x, ciclo[i].y,  ciclo[j].x, ciclo[j].y);
+
                 }
             }
 
@@ -109,7 +114,6 @@ float tsp(int tam_ciclo, int n_pontos, Ponto *pontos_internos, Ponto *ciclo) {
             tripla = FLT_MAX;
             tam_ciclo++;
         }
-        
         n_internos--;
     }
     return custo_ciclo;
@@ -156,12 +160,15 @@ int main(int argc, char *argv[]) {
     int tam_fecho = convexHull(n_pontos, pontos, fecho);
 
     //vetor para armazenar pontos que sobraram apos calculo do fecho convexo
-    Ponto *pontos_internos = (Ponto*) malloc((n_pontos - tam_fecho -1) * sizeof(Ponto));
+    vector<Ponto> pontos_internos;
+    std::vector<Ponto> vec_pontos;
+    vec_pontos.insert(vec_pontos.begin(),begin(pontos), end(pontos));
 
-    removePontos(n_pontos, pontos, fecho, tam_fecho, pontos_internos);
+    removePontos(n_pontos, vec_pontos, fecho, tam_fecho, pontos_internos);
 
     //vetor para armazenar o ciclo computado em tsp
-    Ponto *ciclo = (Ponto*) malloc((n_pontos + 1) * sizeof(Ponto));
+    //Ponto *ciclo = (Ponto*) malloc((n_pontos + 1) * sizeof(Ponto));
+    vector<Ponto> ciclo;
     memcpy(&ciclo, &fecho, sizeof(fecho));
     
     clock_t begin = clock();
