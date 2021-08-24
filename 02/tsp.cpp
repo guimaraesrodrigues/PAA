@@ -18,7 +18,7 @@
 
 using namespace std;
 
-vector<Ponto> removePontos(int n_pontos, vector<Ponto> pontos, Ponto* fecho, int tam_fecho, vector<Ponto> pontos_internos) {
+vector<Ponto> removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_fecho, vector<Ponto> pontos_internos) {
   
     int n_fecho = tam_fecho -1;
     int k = 0;
@@ -142,7 +142,6 @@ int main(int argc, char *argv[]) {
     sscanf(first_line, "%d", &n_pontos);//converte a primeira linha para int
 
     Ponto pontos[n_pontos]; //Lista para representar os pontos lidos no arquivo input.txt
-
     // Cria vetor de pares com base no arquivo input.txt
 	createPointsList(file, pontos);
 
@@ -161,10 +160,8 @@ int main(int argc, char *argv[]) {
 
     //vetor para armazenar pontos que sobraram apos calculo do fecho convexo
     vector<Ponto> pontos_internos;
-    std::vector<Ponto> vec_pontos;
-    vec_pontos.insert(vec_pontos.begin(),begin(pontos), end(pontos));
 
-    removePontos(n_pontos, vec_pontos, fecho, tam_fecho, pontos_internos);
+    removePontos(n_pontos, pontos, fecho, tam_fecho, pontos_internos);
 
     //vetor para armazenar o ciclo computado em tsp
     //Ponto *ciclo = (Ponto*) malloc((n_pontos + 1) * sizeof(Ponto));
