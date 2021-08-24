@@ -47,7 +47,7 @@ void gravaCiclo(int n_ciclo, Ponto *ciclo) {
 		return;
 	}
     
-    int i = n_ciclo - 1;
+    int i = n_ciclo;
     
     while (i >= 0)
 	{
@@ -69,10 +69,8 @@ float tsp(int tam_hull, Ponto *hull, int n_pontos, Ponto *pontos_internos, Ponto
 
     float custo_ciclo = 0.0;
 
-    //insere primeiro e segundo ponto no ciclo
-
+    //insere o primeiro ponto do fecho convexo no ciclo
     ciclo[0] = hull[0];
-    ciclo[1] = hull[1];
 
     int dist_i_j = 0;
     int dist_i_k = 0;
@@ -80,33 +78,43 @@ float tsp(int tam_hull, Ponto *hull, int n_pontos, Ponto *pontos_internos, Ponto
 
     float tripla = FLT_MAX;
     int aux = tripla;
+    int i, j = 0;
 
-    for(int i = 2; i < tam_hull; i ++) {
+    for(int count = 1; count < tam_hull; count++) {
+        i = count - 1;
+        j = count;
 
-        dist_i_j = calcDist(hull[i-2], hull[i-1]);
+        dist_i_j = calcDist(hull[i], hull[j]);
+        tripla = FLT_MAX;
 
         for (int k = 0; k < n_internos; k++) {
-            // printf("foda %d\n", pontos_internos[k].visitado);
+
             if(!pontos_internos[k].visitado) {
                 
-                dist_i_k = calcDist(hull[i-2], pontos_internos[k]);
-                dist_j_k = calcDist(hull[i-1], pontos_internos[k]);
+                dist_i_k = calcDist(hull[i], pontos_internos[k]);
+                dist_j_k = calcDist(hull[j], pontos_internos[k]);
+                
                 aux = dist_i_k + dist_j_k - dist_i_j;
 
                 if (aux < tripla) {
                     tripla = aux;
                     custo_ciclo += dist_i_k + dist_j_k;
 
-                     printf("hull i %f, %f\n", hull[i-2].x, hull[i-2].y);
-                     printf("hull j %f, %f\n", hull[i-1].x, hull[i-1].y);
-                     printf("pontos k %f, %f\n", pontos_internos[k].x, pontos_internos[k].y);
+                    //  printf("hull i %f, %f\n", hull[i].x, hull[i].y);
+                    //  printf("hull j %f, %f\n\n", hull[j].x, hull[j].y);
+
+                    //  printf("pontos k %f, %f\n\n", pontos_internos[k].x, pontos_internos[k].y);
                     pontos_internos[k].visitado = 1; ///???
-                    ciclo[i] = pontos_internos[k];
+
+                    ciclo[j] = pontos_internos[k];
+                    ciclo[j + 1] = hull[j];
                 }
             }
 
         }
     }
+
+    ciclo[n_pontos] = ciclo[0];
 
     return custo_ciclo;
 }
@@ -142,13 +150,17 @@ int main(int argc, char *argv[]) {
     fclose (file);
 
     //vetor para armazenar pontos do fecho convexo
-    Ponto *fecho = (Ponto*) malloc(n_pontos * sizeof(Ponto));
+    Ponto *fecho = (Ponto*) malloc((n_pontos + 1) * sizeof(Ponto));
     
+    /**
+     * Author: https://github.com/AkdenizKutayOcal
+     * Repo: https://github.com/AkdenizKutayOcal/Convex-Hull-Calculation-with-Gift-Wrapping-Algorithm
+     **/
     //Define e retorna a quantidade de pontos que compoem o fecho convexo 
     int tam_fecho = convexHull(n_pontos, pontos, fecho);
 
     //vetor para armazenar pontos que sobraram apos calculo do fecho convexo
-    Ponto *pontos_internos = (Ponto*) malloc((n_pontos - tam_fecho) * sizeof(Ponto));
+    Ponto *pontos_internos = (Ponto*) malloc((n_pontos - tam_fecho -1) * sizeof(Ponto));
 
     removePontos(n_pontos, pontos, fecho, tam_fecho, pontos_internos);
 

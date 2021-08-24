@@ -111,7 +111,8 @@ int wrap(Ponto points[],Ponto *wrapped,int size, Ponto left){
            p = q;
         } while(p != index);//This loop continues until it reaches start point
 
-        return k; //returns the size of wrapped list
+        wrapped[k] = wrapped[0];
+        return k + 1; //returns the size of wrapped list
     }
     else{
         printf("There must be at least 3 points");
