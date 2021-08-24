@@ -4,7 +4,6 @@
 // Struct para representar o ponto
 typedef struct Ponto {
 	float x, y;
-    int visitado;
 } Ponto;
 typedef struct Tripla {
 	Ponto i;

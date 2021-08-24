@@ -1,5 +1,5 @@
 all:
-	gcc tsp.c utils/giftwrapping.c -o tsp                                             
+	g++ -Wall -Wextra -Wsign-compare tsp.cpp utils/giftwrapping.cpp -o tsp
 
 clean:
-	rm -rf tsp
+	rm -rf genpoints

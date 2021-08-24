@@ -15,7 +15,7 @@
 #include "utils/structs.h"
 #include "utils/giftwrapping.h"
 
-Ponto* removePontos(int n_pontos, Ponto pontos[n_pontos], Ponto* fecho, int tam_fecho, Ponto* pontos_internos) {
+Ponto* removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_fecho, Ponto* pontos_internos) {
   
     int n_fecho = tam_fecho -1;
     int k = 0;
@@ -26,7 +26,6 @@ Ponto* removePontos(int n_pontos, Ponto pontos[n_pontos], Ponto* fecho, int tam_
                 break;
             else if (j == n_fecho - 1) {
                 pontos_internos[k] = pontos[i];
-                pontos_internos[k].visitado = 0;
                 k++;
             }
         }

@@ -17,7 +17,7 @@ Ponto leftpoint(Ponto points[], int size);
 orientation isCounter(Ponto A,Ponto B,Ponto C);
 int wrap(Ponto points[],Ponto *wrapped,int size,Ponto left);
 int findIndex(Ponto points[], int size,Ponto p);
-void gravaFecho(int n_pontos, Ponto vertices[n_pontos]);
+void gravaFecho(int n_pontos, Ponto vertices[]);
 
 int convexHull(int n_pontos, Ponto pontos[], Ponto *hull) {
 
@@ -62,7 +62,7 @@ orientation isCounter(Ponto A,Ponto B,Ponto C){
 
     orientation result;
 
-    int a = ((B.y-A.y)*(C.x-B.x))- ((B.x-A.x)*(C.y-B.y));    //Calculates the orientation
+    int a = ((B.y-A.y)*(C.x-B.x)) - ((B.x-A.x)*(C.y-B.y));    //Calculates the orientation
 
     if(a<0){
         result = counterWise;
@@ -148,7 +148,7 @@ int findIndex(Ponto points[], int size, Ponto p){
  * Grava ciclo no arquivo cycle.txt
  * 
  * */
-void gravaFecho(int n_pontos, Ponto vertices[n_pontos]) {
+void gravaFecho(int n_pontos, Ponto vertices[]) {
     FILE *fp = fopen("fecho.txt", "w");
 	if (fp == NULL)
 	{
