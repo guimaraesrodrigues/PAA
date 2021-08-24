@@ -11,6 +11,7 @@
 #include <math.h>
 #include <time.h>
 #include <float.h>
+#include <string.h>
 #include "utils/structs.h"
 #include "utils/giftwrapping.h"
 
@@ -63,14 +64,13 @@ int calcDist(Ponto p1, Ponto p2) {
     return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
-float tsp(int tam_hull, Ponto *hull, int n_pontos, Ponto *pontos_internos, Ponto *ciclo) {
+float tsp(int tam_ciclo, int n_pontos, Ponto *pontos_internos, Ponto *ciclo) {
 
-    int n_internos = n_pontos - tam_hull;
+    int n_internos = n_pontos - tam_ciclo;
 
     float custo_ciclo = 0.0;
-
-    //insere o primeiro ponto do fecho convexo no ciclo
-    ciclo[0] = hull[0];
+    
+    int Vi, Vj, Vk = 0;
 
     int dist_i_j = 0;
     int dist_i_k = 0;
@@ -78,43 +78,42 @@ float tsp(int tam_hull, Ponto *hull, int n_pontos, Ponto *pontos_internos, Ponto
 
     float tripla = FLT_MAX;
     int aux = tripla;
-    int i, j = 0;
 
-    for(int count = 1; count < tam_hull; count++) {
-        i = count - 1;
-        j = count;
+    for(int k = 0; k <= n_internos; k++) {
 
-        dist_i_j = calcDist(hull[i], hull[j]);
-        tripla = FLT_MAX;
+        
+        for (int i = 0; i < tam_ciclo; i++) {
 
-        for (int k = 0; k < n_internos; k++) {
+            int j = i + 1;
 
-            if(!pontos_internos[k].visitado) {
-                
-                dist_i_k = calcDist(hull[i], pontos_internos[k]);
-                dist_j_k = calcDist(hull[j], pontos_internos[k]);
-                
-                aux = dist_i_k + dist_j_k - dist_i_j;
+            dist_i_j = calcDist(ciclo[i], pontos_internos[k]);
+            dist_i_k = calcDist(ciclo[i], pontos_internos[k]);
+            dist_j_k = calcDist(ciclo[j], pontos_internos[k]);
+            
+            aux = dist_i_k + dist_j_k - dist_i_j;
 
-                if (aux < tripla) {
-                    tripla = aux;
-                    custo_ciclo += dist_i_k + dist_j_k;
+            if (aux < tripla) {
+                tripla = aux;
 
-                    //  printf("hull i %f, %f\n", hull[i].x, hull[i].y);
-                    //  printf("hull j %f, %f\n\n", hull[j].x, hull[j].y);
+                Vi = i;
+                Vj = j;
+                Vk = k;
 
-                    //  printf("pontos k %f, %f\n\n", pontos_internos[k].x, pontos_internos[k].y);
-                    pontos_internos[k].visitado = 1; ///???
+                // printf("ponto k %f, %f\n", pontos_internos[k].x, pontos_internos[k].y);
+                // printf("aresta(i,j) = (%f, %f) (%f, %f)\n\n", ciclo[i].x, ciclo[i].y,  ciclo[j].x, ciclo[j].y);
 
-                    ciclo[j] = pontos_internos[k];
-                    ciclo[j + 1] = hull[j];
-                }
             }
-
         }
+
+        ciclo[Vj + 1] = ciclo[Vj];
+        ciclo[Vi + 1] = pontos_internos[Vk];
+        custo_ciclo += tripla;
+
+        tripla = FLT_MAX;
+        tam_ciclo++;
     }
 
-    ciclo[n_pontos] = ciclo[0];
+    // printf("foda %d\n", tam_ciclo);
 
     return custo_ciclo;
 }
@@ -166,10 +165,11 @@ int main(int argc, char *argv[]) {
 
     //vetor para armazenar o ciclo computado em tsp
     Ponto *ciclo = (Ponto*) malloc((n_pontos + 1) * sizeof(Ponto));
-
+    memcpy(&ciclo, &fecho, sizeof(fecho));
+    
     clock_t begin = clock();
 
-    float custo_ciclo = tsp(tam_fecho, fecho, n_pontos, pontos_internos, ciclo);
+    float custo_ciclo = tsp(tam_fecho, n_pontos, pontos_internos, ciclo);
 
     clock_t end = clock();
 

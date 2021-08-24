@@ -8,7 +8,7 @@
 #include <math.h>
 #include "structs.h"
 
-enum orientation{                           //This was a little bit unnecessary and I could do the same thing with int values while checking Clockwise condition
+enum orientation {                           //This was a little bit unnecessary and I could do the same thing with int values while checking Clockwise condition
     counterWise, clockWise,coolinear        //However I wanted to learn how to implement and use typedef in such cases.
 };
 typedef enum orientation orientation;
