@@ -29,7 +29,6 @@ vector<Ponto> removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_f
                 break;
             else if (j == n_fecho - 1) {
                 pontos_internos[k] = pontos[i];
-                pontos_internos[k].visitado = 0;
                 k++;
             }
         }

@@ -14,7 +14,7 @@ enum orientation {                           //This was a little bit unnecessary
 typedef enum orientation orientation;
 
 Ponto leftpoint(Ponto points[], int size);
-orientation isCounter(Ponto A,Ponto B,Ponto C);
+int isCounterWise(Ponto A,Ponto B,Ponto C);
 int wrap(Ponto points[],Ponto *wrapped,int size,Ponto left);
 int findIndex(Ponto points[], int size,Ponto p);
 void gravaFecho(int n_pontos, Ponto vertices[]);
@@ -58,21 +58,16 @@ Ponto leftpoint(Ponto points[], int size) {
 //isCounter Function returns whether given 3 points
 //are CounterClock wise,Clock wise or coolinear.
 ///////////////////////////////////////////////////////////
-orientation isCounter(Ponto A,Ponto B,Ponto C){
+int isCounterWise(Ponto A,Ponto B,Ponto C){
 
-    orientation result;
+    int result = 0;
 
     int a = ((B.y-A.y)*(C.x-B.x)) - ((B.x-A.x)*(C.y-B.y));    //Calculates the orientation
 
-    if(a<0){
-        result = counterWise;
-    }                                                           //And assigns the value according to that value
-    else if((int)a==0){
-        result = coolinear;
-    }
-    else if(a>0){
-        result = clockWise;
-    }
+    if(a < 0){
+        result = 1;
+    } 
+
     return result;
 }
 
@@ -100,7 +95,7 @@ int wrap(Ponto points[],Ponto *wrapped,int size, Ponto left){
             for(int i = 0; i < size-1; i++){
 
                 //This loop finds a point which is clockwise to all other points
-                if(isCounter(points[p],points[i],points[q]) == counterWise) {
+                if(isCounterWise(points[p],points[i],points[q]) == 1) {
                     //And that assigns that point to q
                     q = i;                                                      
                 }
