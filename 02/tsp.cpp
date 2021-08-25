@@ -66,9 +66,8 @@ int calcDist(Ponto p1, Ponto p2) {
     return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
-float tsp(int tam_ciclo, int n_pontos, vector<Ponto> pontos_internos, vector<Ponto> ciclo) {
+float tsp(vector<Ponto> pontos_internos, vector<Ponto> ciclo) {
 
-    int n_internos = n_pontos - tam_ciclo;
     float custo_ciclo = 0.0;
     
     int Vi, Vj, Vk = 0;
@@ -80,11 +79,11 @@ float tsp(int tam_ciclo, int n_pontos, vector<Ponto> pontos_internos, vector<Pon
     float tripla = FLT_MAX;
     int aux = tripla;
 
-    while(n_internos > 0) {
+    while(pontos_internos.size() > 0) {
 
-        for(int k = 0; k <= n_internos; k++) {
+        for(int k = 0; (unsigned)k < pontos_internos.size(); k++) {
 
-            for (int i = 0; i < tam_ciclo; i++) {
+            for (int i = 0; (unsigned)i < ciclo.size(); i++) {
 
                 int j = i + 1;
 
@@ -104,16 +103,13 @@ float tsp(int tam_ciclo, int n_pontos, vector<Ponto> pontos_internos, vector<Pon
 
                 }
             }
-
-            ciclo[Vj + 1] = ciclo[Vj];
-            ciclo[Vi + 1] = pontos_internos[Vk];
-
-            custo_ciclo += tripla;
-
-            tripla = FLT_MAX;
-            tam_ciclo++;
         }
-        n_internos--;
+
+        pontos_internos.erase(pontos_internos.begin() + Vk);
+        ciclo.insert(ciclo.begin() + Vi, ciclo[Vk]);
+
+        custo_ciclo += tripla;
+        tripla = FLT_MAX;
     }
     return custo_ciclo;
 }
@@ -165,11 +161,11 @@ int main(int argc, char *argv[]) {
     //vetor para armazenar o ciclo computado em tsp
     //Ponto *ciclo = (Ponto*) malloc((n_pontos + 1) * sizeof(Ponto));
     vector<Ponto> ciclo;
-    memcpy(&ciclo, &fecho, sizeof(fecho));
-    
+
     clock_t begin = clock();
 
-    float custo_ciclo = tsp(tam_fecho, n_pontos, pontos_internos, ciclo);
+    // float custo_ciclo = tsp(tam_fecho, pontos_internos, ciclo);
+    float custo_ciclo = 0.0;
 
     clock_t end = clock();
 
