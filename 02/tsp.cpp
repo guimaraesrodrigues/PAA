@@ -15,20 +15,20 @@
 using namespace std;
 
 //função que remove os pontos que estão no fecho convexo
-//	Entrada: int n_pontos - ponteiro que apontará para o primeiro elemento da fila
-//			 Ponto pontos[] - lista dos pontos recebidos pelo input
-//           Ponto * fecho - vetor do fecho convexo   
+//	Entrada: int n_pontos - quantidade de pontos em pontos[]
+//			 Ponto pontos[] - array dos pontos recebidos pelo input.txt
+//           Ponto * fecho - array com pontos do fecho convexo processado em convexHull()
 //           int tam_fecho - quantidade de pontos que o fecho convexo possui
-//           vector<Ponto> &pontos_internos - vector dos pontos internos que serão preenchidos   
+//           vector<Ponto> &pontos_internos - referencia para vector pontos_internos declarado na main() 
 //	Saída  : trata-se de uma função void que apenas realiza a remoção de pontos
 void removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_fecho, vector<Ponto> &pontos_internos) {
 
-    for (int i = 0; i < n_pontos; i++) {                                //dois laços são feitos para percorrer os pontos
-        for (int j = 0; j < tam_fecho; j++) {                           
-            if(pontos[i].x == fecho[j].x && pontos[i].y == fecho[j].y)  //condição para caso o ponto ja esteja no conjunto do fecho convexo
+    for (int i = 0; i < n_pontos; i++) {                                //percorre a lista de pontos lida do arquivo.txt
+        for (int j = 0; j < tam_fecho; j++) {                           //percorre a lista de pontos no fecho convexo
+            if(pontos[i].x == fecho[j].x && pontos[i].y == fecho[j].y)  //se pontos[i] está no fecho, não inclui no vector pontos_internos
                 break;
-            else if (j == tam_fecho - 1) {                              //condição para validar a inserção ao vector de pontos internos
-                pontos_internos.push_back(pontos[i]);                   //função pushback adiciona o elemento ao final do vector
+            else if (j == tam_fecho - 1) {                              //Se a iteracao do loop na linha 27 chegou ao final, temos que pontos[i] não está no ciclo
+                pontos_internos.push_back(pontos[i]);                   //assim, adicionamos o ponto no vector de pontos_internos
             }
         }
     }
@@ -59,11 +59,11 @@ void gravaCiclo(vector<Ponto> ciclo) {
     fclose(fp);
 }
  
-//função que calcula a distância euclidiana entre dois nós
-//	Entrada: Ponto p1 - um ponto
-//			 Ponto n2 - outro ponto
-//	Saida  : um valor float que corresponde à distância euclidiana entre os dois pontos.
-int calcDist(Ponto p1, Ponto p2) {
+//função que calcula a distancia euclidiana entre dois pontos p1 e p2
+//	Entrada: Ponto p1
+//			 Ponto p2
+//	Saida  : Valor float que correspondea distancia euclidiana entre os dois pontos.
+float calcDist(Ponto p1, Ponto p2) {
     return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
@@ -83,9 +83,9 @@ float tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
     
     int Vi, Vj, Vk = 0;
 
-    int dist_i_j = 0;
-    int dist_i_k = 0;
-    int dist_j_k = 0;
+    float dist_i_j = 0;
+    float dist_i_k = 0;
+    float dist_j_k = 0;
 
     float tripla = FLT_MAX;
     int aux = tripla;
@@ -100,17 +100,16 @@ float tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
 
                 dist_i_k = calcDist(ciclo[i], pontos_internos[k]); //calcula e armazena a distancia entre a posição i e k, que corresponde a distancia euclidiana entre os elementos
                                                                    // da posição i do vector ciclo e posição k do vector pontos_internos
+
                 dist_j_k = calcDist(ciclo[j], pontos_internos[k]); //calcula e armazena a distancia entre a posição j e k, que corresponde a distancia euclidiana entre os elementos
                                                                    // da posição j do vector ciclo e posição k do vector pontos_internos
                 
-                if ((unsigned)j == ciclo.size()) {
+                if ((unsigned)j == ciclo.size())
                     dist_i_j = calcDist(ciclo[i], ciclo[0]);
-                    aux = dist_i_k + dist_j_k - dist_i_j;
-                }
-                else {
+                else
                     dist_i_j = calcDist(ciclo[i], ciclo[j]);
-                    aux = dist_i_k + dist_j_k - dist_i_j;
-                }
+
+                aux = dist_i_k + dist_j_k - dist_i_j;
 
                 if (aux < tripla) {
                     tripla = aux;
@@ -131,7 +130,13 @@ float tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
     return custo_ciclo;
 }
 
-
+/*
+Função principal do programa
+    Entrada: int argc - quantidade de argumentos recebidos
+             char *argv[] - valor dos argumentos
+    Saida: retorna 0 para quando a  funcao eh executada ate o fim
+           retorn 1 para quando há algum erro na leitura do arquivo de input ou falta de argumento
+*/
 int main(int argc, char *argv[]) {
     FILE *file = NULL; //variavel para input.txt
     char first_line[20]; //buffer para leitura da primeira linha do arquivo
@@ -159,36 +164,45 @@ int main(int argc, char *argv[]) {
    
     fclose (file); //fecha arquivo input.txt
 
-    Ponto *fecho = (Ponto*) malloc((n_pontos + 1) * sizeof(Ponto)); //vetor para armazenar pontos do fecho convexo
+    Ponto *fecho = (Ponto*) malloc((n_pontos + 1) * sizeof(Ponto)); //aray para armazenar pontos do fecho convexo
     
     /**
      * Author: https://github.com/AkdenizKutayOcal
      * Repo: https://github.com/AkdenizKutayOcal/Convex-Hull-Calculation-with-Gift-Wrapping-Algorithm
+     *
+     * funcao para encontrar o fecho convexo utilizando o algoritmo gift wrapping 
      **/
-    
     int tam_fecho = convexHull(n_pontos, pontos, fecho); //Define e retorna a quantidade de pontos que compoem o fecho convexo 
 
-    vector<Ponto> pontos_internos; //inicialização dos vectors 
-    vector<Ponto> ciclo;
+    vector<Ponto> pontos_internos; //vector que representara os pontos internos ao fecho convexo
+    vector<Ponto> ciclo; //vector que representara o ciclo hamiltoniano
 
+    //funcao que inicializa pontos_internos com os pontos internos ao fecho convexo
     removePontos(n_pontos, pontos, fecho, tam_fecho, pontos_internos);
 
-    for(int i= 0; i < tam_fecho; i++) //loop para inserir os elementos do fecho no vector ciclo
+    for(int i= 0; i < tam_fecho; i++) //loop para inicializar o vector ciclo com os pontos do fecho convexo
         ciclo.push_back(fecho[i]);
 
-    clock_t begin = clock();
+    clock_t begin = clock();//inicia contagem de tempo
 
+    //chama funcao que processa o ciclo hamiltoniano
+    //passando o vector de pontos_internos e a referencia para o vector ciclo
+    //retorna em custo_ciclo o custo do ciclo computado
     float custo_ciclo = tsp(pontos_internos, ciclo);
 
-    clock_t end = clock();
+    clock_t end = clock();//encerra contagem de tempo
 
     // for(int i = 0; (unsigned)i < ciclo.size(); i++)
     //     printf("%f, %f\n", ciclo[i].x, ciclo[i].y);
 
-    //tempo algoritmo
+    //tempo algoritmo tsp()
 	double tempo = (double)(end - begin) / CLOCKS_PER_SEC;
 
+    //grava os pontos do ciclo no arquivo ciclo.txt
     gravaCiclo(ciclo);
 
+    //imprime no console o tempo de execucao do algoritmo tsp e o custo computado para o ciclo
     printf("%lf %f", tempo, custo_ciclo);
+
+    return 0;
 }
