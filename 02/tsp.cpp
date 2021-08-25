@@ -11,26 +11,25 @@
 #include <math.h>
 #include <time.h>
 #include <float.h>
-#include <string.h>
+
 #include <vector>
+
 #include "utils/structs.h"
 #include "utils/giftwrapping.h"
 
 using namespace std;
 
-vector<Ponto> removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_fecho, vector<Ponto> pontos_internos, vector<Ponto> ciclo) {
-    int n_fecho = tam_fecho -1;
+void removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_fecho, vector<Ponto> &pontos_internos) {
 
-    for (int i = 0; i < n_pontos; i++)
-        for (int j = 0; j < n_fecho; j++) {
+    for (int i = 0; i < n_pontos; i++) {
+        for (int j = 0; j < tam_fecho; j++) {
             if(pontos[i].x == fecho[j].x && pontos[i].y == fecho[j].y)
-                ciclo.push_back(pontos[i]);
-            else if (j == n_fecho - 1) {
+                break;
+            else if (j == tam_fecho - 1) {
                 pontos_internos.push_back(pontos[i]);
             }
         }
-
-    return pontos_internos;
+    }
 }
 
 
@@ -50,8 +49,6 @@ void gravaCiclo(vector<Ponto> ciclo) {
     
     int i = ciclo.size();
 
-    printf("ciclo %d \n", i);
-    
     while (i >= 0)
 	{
         fprintf(fp, "%f %f\n", ciclo[i].x, ciclo[i].y);
@@ -66,6 +63,10 @@ int calcDist(Ponto p1, Ponto p2) {
     return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
+/**
+ * Entrada: - vector pontos_internos contendo os pontos que estao internos ao fecho convexo
+ *          - vector ciclo com os pontos que representam o fecho convexo definido por convexHull()
+ **/
 float tsp(vector<Ponto> pontos_internos, vector<Ponto> ciclo) {
 
     float custo_ciclo = 0.0;
@@ -156,23 +157,24 @@ int main(int argc, char *argv[]) {
     vector<Ponto> pontos_internos;
     vector<Ponto> ciclo;
 
-    removePontos(n_pontos, pontos, fecho, tam_fecho, pontos_internos, ciclo);
+    removePontos(n_pontos, pontos, fecho, tam_fecho, pontos_internos);
+
+    for(int i= 0; i < tam_fecho; i++)
+        ciclo.push_back(fecho[i]);
+
+    // for(int i= 0; (unsigned)i < ciclo.size(); i++)
+    //     printf("%f, %f\n", ciclo[i].x, ciclo[i].y);
 
     clock_t begin = clock();
 
-    // float custo_ciclo = tsp(tam_fecho, pontos_internos, ciclo);
-    float custo_ciclo = 0.0;
+    float custo_ciclo = tsp(pontos_internos, ciclo);
 
     clock_t end = clock();
-
-    // for (int i = 0; i < n_pontos; i++) {
-    //     printf("%f, %f\n", ciclo[i].x, ciclo[i].y);
-    // }
 
     //tempo algoritmo
 	double tempo = (double)(end - begin) / CLOCKS_PER_SEC;
 
-    // gravaCiclo(ciclo);
+    gravaCiclo(ciclo);
 
     printf("%lf %f", tempo, custo_ciclo);
 }
