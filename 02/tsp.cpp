@@ -67,37 +67,40 @@ float calcDist(Ponto p1, Ponto p2) {
     return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
-//função que calcula que processa ciclo e retorna o seu custo
+// função que calcula que processa ciclo e retorna o seu custo
 //
 // Entrada: vector<Ponto> pontos_internos: vector com pontos que nao pertecem ao fecho convexo
 //          vector<Ponto> &ciclo: ja inicializado com pontos que representam o fecho convexo, vai receber o restante dos pontos em pontos_intenos
 //
-// Saida: float custo_ciclo: o custo calculado de todas as arestas do ciclo
+// Saida: ao fim do algoritmo, vector ciclo deve estar preenchido com um ciclo hamiltoniano formado pelos pontos de input.txt
 //
-// No TSP foi utilizado o cheapest insertion, assim como temos três laços cada um sendo O(n),
-// a complexidade temporal resultante, para a função tsp(), é portanto O(n³).
-//No algoritmo é feito a varredura nos pontos internos para o ciclo. Assim é calculado a menor
-// distancia entre ele o ciclo, que no começo é apenas o fecho calculado pelo convexHull(). O elemento que possuir a menor distância euclidiana será inserido no ciclo,
-// então é removido do vector dos pontos internos. O custo é somado toda vez que é inserido e removido um elemento.
+// No TSP foi utilizado o cheapest insertion como estrategia gulosa para resolver os subproblemas
+// a complexidade do algoritmo resulta em O(n³) pois, enquanto há pontos internos ainda não inseridos no ciclo, percorremos todos
+// os pontos internos e os comparamos com todas as arestas inseridas no ciclo ate interacao corrente.
+// Ao fazer a varredura nos pontos internos para o ciclo, calculamos a menor tripla entre ele e todas as arestas do ciclo
+// A tripla que possuir o menor valor guardamos o valor dos indices de Vj e Vk para que, ao final da iteracao de pontos_internos, 
+// O ponto Vk é inserido no ciclo e removido do vector pontos_internos
 void tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
 
-    int Vi, Vj, Vk = 0; //Variáveis para representar os indices dos vertices Vi, Vj e Vk
+    int Vj, Vk = 0; //Variáveis para representar os indices dos vertices Vj e Vk
 
     //Variáveis para representar as distancias calculadas entre os vertices Vi, Vj e Vk
     float dist_i_j = 0;
     float dist_i_k = 0;
     float dist_j_k = 0;
 
-    float tripla = FLT_MAX; //tripla representara 
-    float aux = tripla;
+    float tripla = FLT_MAX; //tripla representara a tripla minima entre os pontos Vi, Vj e Vk. Inicializamos FLT_MAX para garantir que, em algum momento da i-esima interacao, 
+                           // vamos encontrar um valor minimo
+    float aux = tripla; //variavel auxiliar para utilizar ao longo das interacoes
 
-    while(pontos_internos.size() > 0) {                             // o primeiro loop com a condicional se mantenha verdadeira até que os elementos do vector
-                                                                    // estejam vazios
-        for(int k = 0; (unsigned)k < pontos_internos.size(); k++) { // o segundo loop é para percorrer o vector pontos_internos por todo o seu tamanho
+    // Enquanto há pontos em pontos_internos
+    while(pontos_internos.size() > 0) {          
+        // Percorremos todos os pontos em pontos_internos para compara 1 a 1 com as arestas em ciclo             
+        for(int k = 0; (unsigned)k < pontos_internos.size(); k++) {
+            // Percorremos o vector ciclo para calcular a tripla de cada pontos_internos[k] com ciclo[i] e ciclo[j], onde (ciclo[i], ciclo[j]) é uma aresta do ciclo
+            for (int i = 0; (unsigned)i < ciclo.size(); i++) {
 
-            for (int i = 0; (unsigned)i < ciclo.size(); i++) {      // o terceiro loop é para percorrer o vector ciclo que contem os elementos do fecho convexo
-
-                int j = i + 1;
+                int j = i + 1;//indice para acessarciclo[j]
 
                 dist_i_k = calcDist(ciclo[i], pontos_internos[k]); //calcula e armazena a distancia entre a posição i e k, que corresponde a distancia euclidiana entre os elementos
                                                                    // da posição i do vector ciclo e posição k do vector pontos_internos
@@ -105,16 +108,20 @@ void tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
                 dist_j_k = calcDist(ciclo[j], pontos_internos[k]); //calcula e armazena a distancia entre a posição j e k, que corresponde a distancia euclidiana entre os elementos
                                                                    // da posição j do vector ciclo e posição k do vector pontos_internos
                 
+                //se chegamos ao final do vector ciclo
+                //entao usamos o ponto ciclo[0] como ciclo[j]
                 if ((unsigned)j == ciclo.size())
                     dist_i_j = calcDist(ciclo[i], ciclo[0]);
                 else
                     dist_i_j = calcDist(ciclo[i], ciclo[j]);
 
+                //calcula a tripla minima
                 aux = dist_i_k + dist_j_k - dist_i_j;
 
+                 //se for menor do que a tripla minima ja calculada
                 if (aux < tripla) {
-                    tripla = aux;
-                    Vi = i;
+                    tripla = aux; //atualiza o valor da tripla minima
+                     //salva indices para usar na insercao e remocao ao final do loop da linha 99
                     Vj = j;
                     Vk = k;
                 }
@@ -125,7 +132,7 @@ void tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
 
         pontos_internos.erase(pontos_internos.begin() + Vk); //faz a remoção do elemento na posição Vk do vector pontos_internos
 
-        tripla = FLT_MAX;
+        tripla = FLT_MAX;//reinicia o valor da tripla minima 
     }
 }
 
@@ -186,7 +193,7 @@ int main(int argc, char *argv[]) {
 
     //chama funcao que processa o ciclo hamiltoniano
     //passando o vector de pontos_internos e a referencia para o vector ciclo
-    //ao fim do algoritmo, vector ciclo deve estar preenchido com todos um ciclo hamiltoniano formado pelos pontos de input.txt
+    //ao fim do algoritmo, vector ciclo deve estar preenchido com um ciclo hamiltoniano formado pelos pontos de input.txt
     tsp(pontos_internos, ciclo);
 
     clock_t end = clock();//encerra contagem de tempo
