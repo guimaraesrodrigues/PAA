@@ -47,12 +47,12 @@ void gravaCiclo(vector<Ponto> ciclo) {
 		return;
 	}
     
-    int i = ciclo.size();
+    int i = 0;
 
-    while (i >= 0)
+    while ((unsigned)i < ciclo.size())
 	{
         fprintf(fp, "%f %f\n", ciclo[i].x, ciclo[i].y);
-        i--;
+        i++;
 	}
 
     fclose(fp);
@@ -67,7 +67,7 @@ int calcDist(Ponto p1, Ponto p2) {
  * Entrada: - vector pontos_internos contendo os pontos que estao internos ao fecho convexo
  *          - vector ciclo com os pontos que representam o fecho convexo definido por convexHull()
  **/
-float tsp(vector<Ponto> pontos_internos, vector<Ponto> ciclo) {
+float tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
 
     float custo_ciclo = 0.0;
     
@@ -162,14 +162,14 @@ int main(int argc, char *argv[]) {
     for(int i= 0; i < tam_fecho; i++)
         ciclo.push_back(fecho[i]);
 
-    // for(int i= 0; (unsigned)i < ciclo.size(); i++)
-    //     printf("%f, %f\n", ciclo[i].x, ciclo[i].y);
-
     clock_t begin = clock();
 
     float custo_ciclo = tsp(pontos_internos, ciclo);
 
     clock_t end = clock();
+
+    // for(int i = 0; (unsigned)i < ciclo.size(); i++)
+    //     printf("%f, %f\n", ciclo[i].x, ciclo[i].y);
 
     //tempo algoritmo
 	double tempo = (double)(end - begin) / CLOCKS_PER_SEC;
