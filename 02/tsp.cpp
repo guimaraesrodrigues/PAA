@@ -38,7 +38,7 @@ vector<Ponto> removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_f
  * Grava ciclo no arquivo ciclo.txt
  * 
  * */
-void gravaCiclo(int n_ciclo, vector<Ponto> ciclo) {
+void gravaCiclo(vector<Ponto> ciclo) {
    
     FILE *fp = fopen("ciclo.txt", "w");
 	
@@ -48,7 +48,9 @@ void gravaCiclo(int n_ciclo, vector<Ponto> ciclo) {
 		return;
 	}
     
-    int i = n_ciclo;
+    int i = ciclo.size();
+
+    printf("ciclo %d \n", i);
     
     while (i >= 0)
 	{
@@ -170,7 +172,7 @@ int main(int argc, char *argv[]) {
     //tempo algoritmo
 	double tempo = (double)(end - begin) / CLOCKS_PER_SEC;
 
-    gravaCiclo(n_pontos, ciclo);
+    // gravaCiclo(ciclo);
 
     printf("%lf %f", tempo, custo_ciclo);
 }
