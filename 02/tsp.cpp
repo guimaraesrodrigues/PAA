@@ -88,26 +88,31 @@ float tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
 
                 int j = i + 1;
 
-                dist_i_j = calcDist(ciclo[i], pontos_internos[j]);
                 dist_i_k = calcDist(ciclo[i], pontos_internos[k]);
+
                 dist_j_k = calcDist(ciclo[j], pontos_internos[k]);
                 
-                aux = dist_i_k + dist_j_k - dist_i_j;
+                if ((unsigned)j == ciclo.size()) {
+                    dist_i_j = calcDist(ciclo[i], ciclo[0]);
+                    aux = dist_i_k + dist_j_k - dist_i_j;
+                }
+                else {
+                    dist_i_j = calcDist(ciclo[i], ciclo[j]);
+                    aux = dist_i_k + dist_j_k - dist_i_j;
+                }
 
                 if (aux < tripla) {
                     tripla = aux;
                     Vi = i;
                     Vj = j;
                     Vk = k;
-                    // printf("ponto k %f, %f\n", pontos_internos[k].x, pontos_internos[k].y);
-                    // printf("aresta(i,j) = (%f, %f) (%f, %f)\n\n", ciclo[i].x, ciclo[i].y,  ciclo[j].x, ciclo[j].y);
-
                 }
             }
         }
 
+        ciclo.insert(ciclo.begin() + Vj, pontos_internos[Vk]);
+
         pontos_internos.erase(pontos_internos.begin() + Vk);
-        ciclo.insert(ciclo.begin() + Vi, ciclo[Vk]);
 
         custo_ciclo += tripla;
         tripla = FLT_MAX;
