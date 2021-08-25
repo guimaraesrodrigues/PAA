@@ -19,6 +19,11 @@ int wrap(Ponto points[],Ponto *wrapped,int size,Ponto left);
 int findIndex(Ponto points[], int size,Ponto p);
 void gravaFecho(int n_pontos, Ponto vertices[]);
 
+
+// Entrada: Ponto pontos -> array com pontos lidos de input.txt
+//           Ponto* hull -> ponteiro para o array de pontos co fecho convexo
+
+// Saida: int hull_size -> tamanho do array hull que representa o fecho convexo calculado
 int convexHull(int n_pontos, Ponto pontos[], Ponto *hull) {
 
     //Left Most point
@@ -55,8 +60,8 @@ Ponto leftpoint(Ponto points[], int size) {
 }
 
 ////////////////////////////////////////////////////////////
-//isCounter Function returns whether given 3 points
-//are CounterClock wise,Clock wise or coolinear.
+//isCounterWise Function returns whether given 3 points
+//are CounterWise
 ///////////////////////////////////////////////////////////
 int isCounterWise(Ponto A,Ponto B,Ponto C){
 

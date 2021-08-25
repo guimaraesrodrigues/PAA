@@ -67,27 +67,28 @@ float calcDist(Ponto p1, Ponto p2) {
     return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 
-//função que calcula o custo do ciclo apos fazer a inserção dos pontos 
-// Entrada : vector<Ponto> pontos_internos: pontos que estao internos ao fecho convexo
-//           vector<Ponto> ciclo com os pontos que representam o fecho convexo definido por convexHull()
-// Saida   : float custo_ciclo: o custo calculado entre as distancias entre os pontos do ciclo
+//função que calcula que processa ciclo e retorna o seu custo
+//
+// Entrada: vector<Ponto> pontos_internos: vector com pontos que nao pertecem ao fecho convexo
+//          vector<Ponto> &ciclo: ja inicializado com pontos que representam o fecho convexo, vai receber o restante dos pontos em pontos_intenos
+//
+// Saida: float custo_ciclo: o custo calculado de todas as arestas do ciclo
+//
 // No TSP foi utilizado o cheapest insertion, assim como temos três laços cada um sendo O(n),
 // a complexidade temporal resultante, para a função tsp(), é portanto O(n³).
 //No algoritmo é feito a varredura nos pontos internos para o ciclo. Assim é calculado a menor
 // distancia entre ele o ciclo, que no começo é apenas o fecho calculado pelo convexHull(). O elemento que possuir a menor distância euclidiana será inserido no ciclo,
 // então é removido do vector dos pontos internos. O custo é somado toda vez que é inserido e removido um elemento.
+void tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
 
-float tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
+    int Vi, Vj, Vk = 0; //Variáveis para representar os indices dos vertices Vi, Vj e Vk
 
-    float custo_ciclo = 0.0;
-    
-    int Vi, Vj, Vk = 0;
-
+    //Variáveis para representar as distancias calculadas entre os vertices Vi, Vj e Vk
     float dist_i_j = 0;
     float dist_i_k = 0;
     float dist_j_k = 0;
 
-    float tripla = FLT_MAX;
+    float tripla = FLT_MAX; //tripla representara 
     float aux = tripla;
 
     while(pontos_internos.size() > 0) {                             // o primeiro loop com a condicional se mantenha verdadeira até que os elementos do vector
@@ -124,10 +125,8 @@ float tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
 
         pontos_internos.erase(pontos_internos.begin() + Vk); //faz a remoção do elemento na posição Vk do vector pontos_internos
 
-        custo_ciclo += tripla; //faz a soma do custo
         tripla = FLT_MAX;
     }
-    return custo_ciclo;
 }
 
 /*
@@ -187,8 +186,8 @@ int main(int argc, char *argv[]) {
 
     //chama funcao que processa o ciclo hamiltoniano
     //passando o vector de pontos_internos e a referencia para o vector ciclo
-    //retorna em custo_ciclo o custo do ciclo computado
-    float custo_ciclo = tsp(pontos_internos, ciclo);
+    //ao fim do algoritmo, vector ciclo deve estar preenchido com todos um ciclo hamiltoniano formado pelos pontos de input.txt
+    tsp(pontos_internos, ciclo);
 
     clock_t end = clock();//encerra contagem de tempo
 
@@ -197,6 +196,16 @@ int main(int argc, char *argv[]) {
 
     //grava os pontos do ciclo no arquivo ciclo.txt
     gravaCiclo(ciclo);
+
+    float custo_ciclo = 0.0;
+
+    //Percorre vector ciclo para calcular o custo do ciclo hamiltoniano
+    for(int i = 0; (unsigned)i < ciclo.size(); i++) {
+        if ((unsigned)i + 1 == ciclo.size())
+            custo_ciclo += calcDist(ciclo[i], ciclo[0]);
+        else
+            custo_ciclo += calcDist(ciclo[i], ciclo[i+1]);
+    }
 
     //imprime no console o tempo de execucao do algoritmo tsp e o custo computado para o ciclo
     printf("%lf %f", tempo, custo_ciclo);
