@@ -18,23 +18,21 @@
 
 using namespace std;
 
-vector<Ponto> removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_fecho, vector<Ponto> pontos_internos) {
-  
+vector<Ponto> removePontos(int n_pontos, Ponto pontos[], Ponto* fecho, int tam_fecho, vector<Ponto> pontos_internos, vector<Ponto> ciclo) {
     int n_fecho = tam_fecho -1;
-    int k = 0;
 
     for (int i = 0; i < n_pontos; i++)
         for (int j = 0; j < n_fecho; j++) {
             if(pontos[i].x == fecho[j].x && pontos[i].y == fecho[j].y)
-                break;
+                ciclo.push_back(pontos[i]);
             else if (j == n_fecho - 1) {
-                pontos_internos[k] = pontos[i];
-                k++;
+                pontos_internos.push_back(pontos[i]);
             }
         }
 
     return pontos_internos;
 }
+
 
 /**
  * Grava ciclo no arquivo ciclo.txt
@@ -153,14 +151,10 @@ int main(int argc, char *argv[]) {
     //Define e retorna a quantidade de pontos que compoem o fecho convexo 
     int tam_fecho = convexHull(n_pontos, pontos, fecho);
 
-    //vetor para armazenar pontos que sobraram apos calculo do fecho convexo
     vector<Ponto> pontos_internos;
-
-    removePontos(n_pontos, pontos, fecho, tam_fecho, pontos_internos);
-
-    //vetor para armazenar o ciclo computado em tsp
-    //Ponto *ciclo = (Ponto*) malloc((n_pontos + 1) * sizeof(Ponto));
     vector<Ponto> ciclo;
+
+    removePontos(n_pontos, pontos, fecho, tam_fecho, pontos_internos, ciclo);
 
     clock_t begin = clock();
 
