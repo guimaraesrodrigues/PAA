@@ -88,7 +88,7 @@ float tsp(vector<Ponto> pontos_internos, vector<Ponto> &ciclo) {
     float dist_j_k = 0;
 
     float tripla = FLT_MAX;
-    int aux = tripla;
+    float aux = tripla;
 
     while(pontos_internos.size() > 0) {                             // o primeiro loop com a condicional se mantenha verdadeira até que os elementos do vector
                                                                     // estejam vazios
