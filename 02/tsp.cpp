@@ -52,7 +52,7 @@ void gravaCiclo(vector<Ponto> ciclo) {
 
     while ((unsigned)i < ciclo.size())                  //laço com a condição de ciclo.size() - size busca o tamanho do vector -  para enquanto 
 	{                                                   //o tamanho do vector for maior que a variavel inicializada, o loop ele se mantem verdadeiro
-        fprintf(fp, "%f %f\n", ciclo[i].x, ciclo[i].y); //faz a inserção dos elementos x e y da struct Ponto no arquivo
+        fprintf(fp, "%f %f\n", ciclo[i].x, ciclo[i].y); //faz a inserção dos elementos x e y da struct Ponto no arquivo ciclo.txt
         i++;
 	}
 
@@ -191,9 +191,6 @@ int main(int argc, char *argv[]) {
     float custo_ciclo = tsp(pontos_internos, ciclo);
 
     clock_t end = clock();//encerra contagem de tempo
-
-    // for(int i = 0; (unsigned)i < ciclo.size(); i++)
-    //     printf("%f, %f\n", ciclo[i].x, ciclo[i].y);
 
     //tempo algoritmo tsp()
 	double tempo = (double)(end - begin) / CLOCKS_PER_SEC;
